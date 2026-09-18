@@ -1,53 +1,98 @@
 import { round, score } from './score.js';
 
 /**
- * Path to directory containing `_list.json` and all levels
+ * Path to directory containing `_list.json` and all levels.
+ *
+ * Use document.baseURI instead of relying on the current page URL.
+ * This keeps data loading working on GitHub Pages project sites such as
+ * /cubeygdps-demonlist/.
  */
-const dir = './data';
+const dataUrl = (file) => new URL(`./data/${file}`, document.baseURI).href;
 
 export async function fetchList() {
-    const listResult = await fetch(`${dir}/_list.json`);
     try {
+        const listResult = await fetch(dataUrl('_list.json'));
+
+        if (!listResult.ok) {
+            throw new Error(`HTTP ${listResult.status} while loading _list.json`);
+        }
+
         const list = await listResult.json();
+
+        if (!Array.isArray(list)) {
+            throw new Error('_list.json does not contain an array');
+        }
+
         return await Promise.all(
             list.map(async (path, rank) => {
-                const levelResult = await fetch(`${dir}/${path}.json`);
                 try {
+                    const levelResult = await fetch(dataUrl(`${path}.json`));
+
+                    if (!levelResult.ok) {
+                        throw new Error(
+                            `HTTP ${levelResult.status} while loading ${path}.json`,
+                        );
+                    }
+
                     const level = await levelResult.json();
+
+                    if (!level || typeof level !== 'object') {
+                        throw new Error('level JSON is not an object');
+                    }
+
+                    const records = Array.isArray(level.records)
+                        ? [...level.records].sort(
+                              (a, b) => b.percent - a.percent,
+                          )
+                        : [];
+
                     return [
                         {
                             ...level,
                             path,
-                            records: level.records.sort(
-                                (a, b) => b.percent - a.percent,
-                            ),
+                            records,
                         },
                         null,
                     ];
-                } catch {
-                    console.error(`Failed to load level #${rank + 1} ${path}.`);
+                } catch (error) {
+                    console.error(
+                        `Failed to load level #${rank + 1} ${path}.`,
+                        error,
+                    );
                     return [null, path];
                 }
             }),
         );
-    } catch {
-        console.error(`Failed to load list.`);
+    } catch (error) {
+        console.error('Failed to load list.', error);
         return null;
     }
 }
 
 export async function fetchEditors() {
     try {
-        const editorsResults = await fetch(`${dir}/_editors.json`);
+        const editorsResults = await fetch(dataUrl('_editors.json'));
+
+        if (!editorsResults.ok) {
+            throw new Error(
+                `HTTP ${editorsResults.status} while loading _editors.json`,
+            );
+        }
+
         const editors = await editorsResults.json();
         return editors;
-    } catch {
+    } catch (error) {
+        console.error('Failed to load list editors.', error);
         return null;
     }
 }
 
 export async function fetchLeaderboard() {
     const list = await fetchList();
+
+    if (!list) {
+        return [[], ['_list.json']];
+    }
 
     const scoreMap = {};
     const errs = [];
