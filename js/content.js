@@ -7,7 +7,7 @@ import { round, score } from './score.js';
  * This keeps data loading working on GitHub Pages project sites such as
  * /cubeygdps-demonlist/.
  */
-const dataUrl = (file) => new URL(`./data/${file}`, document.baseURI).href;
+const dataUrl = (file) => new URL(`../data/${file}`, import.meta.url).href;
 
 export async function fetchList() {
     try {
