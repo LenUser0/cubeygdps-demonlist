@@ -7,5 +7,18 @@
     "verification": "https://www.youtube.com/watch?v=xUOQXZJ9OE0",
     "percentToQualify": 40,
     "password": "Free to copy",
-    "records": []
+    "records": [
+        {
+            "user": "Wudja",
+            "link": "https://youtu.be/A7x1c2Gwj4A?si=KqW5fMO6AwTE6-1m",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "LenUser",
+            "link": "https://medal.tv/games/geometry-dash/clips/nskL8e7CYZRx84rL6",
+            "percent": 100,
+            "hz": 360
+        }
+    ]
 }
