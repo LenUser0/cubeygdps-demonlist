@@ -71,7 +71,7 @@ export default {
                                 <img v-if="record.mobile" :src="\`./assets/phone-landscape\${store.dark ? '-dark' : ''}.svg\`" alt="Mobile">
                             </td>
                             <td class="hz">
-                                <p>{{ record.hz }}Hz</p>
+                                <p>{{ record.fps ?? record.hz }} FPS<span v-if="record.cbf"> + CBF</span></p>
                             </td>
                         </tr>
                     </table>
@@ -138,9 +138,13 @@ export default {
     }),
     computed: {
         level() {
-            return this.list[this.selected][0];
+            return this.list?.[this.selected]?.[0] || null;
         },
         video() {
+            if (!this.level) {
+                return "";
+            }
+
             if (!this.level.showcase) {
                 return embed(this.level.verification);
             }
@@ -167,7 +171,7 @@ export default {
                 ...this.list
                     .filter(([_, err]) => err)
                     .map(([_, err]) => {
-                        return `Failed to load level. (${err}.json)`;
+                        return `Failed to load level. (\${err}.json)`;
                     })
             );
             if (!this.editors) {
