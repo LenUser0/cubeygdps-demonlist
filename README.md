@@ -1,48 +1,86 @@
-# Welcome to the Geometry Dash Shitty List template!
+# CubeyGDPS Demon List
 
-# FAQ
+The official Demon List website for **CubeyGDPS**.
+
+Website: https://lenuser0.github.io/cubeygdps-demonlist/
+
+## Features
+
+- Demon List with rankings and level information
+- Player records and progress
+- Leaderboard
+- Roulette
+- Dark mode
+- List editor information
+
+## FAQ
 
 ---
 
 ### Website FAQ
 
-Can I use the Shitty List template?
+**Can I use this template for my own list?**
 
-- Sure. Credits to the shitty list are embedded onto this template so keep that in.
+- This website is based on the original Geometry Dash Shitty List template. The original template credits are kept in the website as required by its original license/template instructions.
 
-The website isn't loading! What can I do?
+**The website isn't loading! What can I do?**
 
-- Since no webhost is perfect, downtime is expected. You can either wait till the
-  website is back online or you can do some behind the scene stuff and run it
-  locally.
+- Check the browser's developer tools and open the **Console** tab for errors.
+- Make sure JSON files contain valid JSON syntax.
+- If the site was just updated, GitHub Pages may need a little time to deploy the latest changes.
 
 ---
 
 ### Usage FAQ
 
-How do I add levels to the list?
+**How do I add levels to the list?**
 
-- Use one of the provided template json files and modify the details to fill in the details
-  accordingly. If there are any errors, the site will not load, or you will get a pop up
-  saying which level isn't loading.
+- Add the level's JSON file to the `data/` directory.
+- Add the level's file path to `data/_list.json` in the desired ranking order.
+- Follow the structure of the existing level JSON files so all required fields are present.
+- Check the browser console if a level fails to load.
 
-How do I add records to the list?
+**How do I add records to the list?**
 
-- Again, use one of the given templates, and modify the details accordingly. For mobile
-  records, you can add the code `mobile: true` within the braces. Make sure there are no
-  excess or missing commas, or the website might not load properly.
+- Open the level's JSON file in `data/` and add the record using the same structure as the existing records.
+- For mobile records, add `"mobile": true` to the record.
+- Make sure commas and quotation marks are correct; invalid JSON can prevent the list from loading correctly.
 
-What are some common reasons for the website not loading?
+**How do I add or edit list staff/moderators?**
 
-- The most common cause is missing commas and inverted commas, or extra commas at the end of
-  the last lines within list entries. A good way to find the error-causing lines can be found
-  by using `Inspect Element` and going to the `Console` tab.
+- Staff members are configured in `data/_editors.json`.
+- Each entry contains a `role`, `name`, and optional `link`.
+- The available roles currently used by the website are:
+  - `owner`
+  - `admin`
+  - `helper`
+  - `trial`
+  - `dev`
+- The role controls which icon is displayed next to the staff member.
+- This file controls the public staff list shown on the website. It is **not** an authentication or permission system.
+
+**How do I change the website name?**
+
+- Edit the title and visible site name in `index.html`.
+- The current site name is **CubeyGDPS Demon List**.
+
+**What are some common reasons for the website not loading?**
+
+- Invalid JSON, such as missing commas or quotation marks.
+- Incorrect file paths.
+- A level listed in `data/_list.json` whose JSON file is missing or invalid.
+- Browser console errors can help identify the exact file or problem.
 
 ---
 
+## Credits
+
+This project is based on the original **Geometry Dash Shitty List** template by its original maintainers.
+
+The website also keeps the template's embedded **TheShittyList** layout credit.
+
+## Repository Maintainers
+
+- LenUser0
+
 ## More Coming Soon!
-
-## Repo Maintainers:
-
-- Prometheus
-- Emonadeo
