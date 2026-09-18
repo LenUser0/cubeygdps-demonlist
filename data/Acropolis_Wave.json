@@ -12,13 +12,15 @@
             "user": "Wudja",
             "link": "https://youtu.be/A7x1c2Gwj4A?si=KqW5fMO6AwTE6-1m",
             "percent": 100,
-            "hz": 360
+            "fps": 90,
+            "mobile": true
         },
         {
             "user": "LenUser",
             "link": "https://medal.tv/games/geometry-dash/clips/nskL8e7CYZRx84rL6",
             "percent": 100,
-            "hz": 360
+            "fps": 60,
+            "cbf": true
         }
     ]
 }
