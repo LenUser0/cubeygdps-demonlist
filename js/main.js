@@ -17,16 +17,15 @@ const router = VueRouter.createRouter({
 });
 
 app.use(router);
-
 app.mount('#app');
 
 const modal = document.createElement('div');
 modal.className = 'submission-modal';
-modal.hidden = true;
 modal.id = 'submission-modal';
 modal.setAttribute('role', 'dialog');
 modal.setAttribute('aria-modal', 'true');
 modal.setAttribute('aria-labelledby', 'submission-modal-title');
+modal.hidden = true;
 modal.innerHTML = `
     <div class="submission-modal__box">
         <button
@@ -64,30 +63,39 @@ modal.innerHTML = `
         </div>
     </div>
 `;
-document.body.appendChild(modal);
 
-const openButton = document.getElementById('submit-record-button');
-const closeButton = document.getElementById('submission-modal-close');
-const closeButtonBottom = document.getElementById('submission-modal-close-button');
+// Keep the modal outside Vue's #app tree so Vue cannot replace it.
+document.documentElement.appendChild(modal);
 
 const closeModal = () => {
     modal.classList.remove('is-open');
     modal.hidden = true;
 };
 
-if (openButton) {
-    openButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        modal.hidden = false;
-        modal.classList.add('is-open');
-    });
-}
+const openModal = (event) => {
+    event.preventDefault();
+    modal.hidden = false;
+    modal.classList.add('is-open');
+};
 
-closeButton?.addEventListener('click', closeModal);
-closeButtonBottom?.addEventListener('click', closeModal);
+// The router renders the Submit Record link after app.mount(), so direct
+// getElementById() lookup can happen too early. Event delegation works
+// regardless of when Vue renders or rerenders the link.
+document.addEventListener('click', (event) => {
+    const openButton = event.target.closest?.('#submit-record-button');
 
-modal.addEventListener('click', (event) => {
-    if (event.target === modal) closeModal();
+    if (openButton) {
+        openModal(event);
+        return;
+    }
+
+    if (
+        event.target === modal ||
+        event.target.closest?.('#submission-modal-close') ||
+        event.target.closest?.('#submission-modal-close-button')
+    ) {
+        closeModal();
+    }
 });
 
 document.addEventListener('keydown', (event) => {
