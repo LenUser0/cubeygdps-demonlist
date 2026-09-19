@@ -65,7 +65,7 @@ modal.innerHTML = `
 `;
 
 // Keep the modal outside Vue's #app tree so Vue cannot replace it.
-document.documentElement.appendChild(modal);
+document.body.appendChild(modal);
 
 const closeModal = () => {
     modal.classList.remove('is-open');
