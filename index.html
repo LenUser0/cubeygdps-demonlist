@@ -121,7 +121,8 @@
         <script src="https://unpkg.com/vue-router@4.0.14/dist/vue-router.global.prod.js"></script>
         <script type="module" src="js/main.js"></script>
     </head>
-    <body id="app">
+    <body>
+        <div id="app">
         <header :class="{ dark: store.dark }">
             <div class="logo">
                 <h2>CubeyGDPS Demon List</h2>
@@ -164,6 +165,8 @@
             </nav>
         </header>
         <router-view :class="{ dark: store.dark }"></router-view>
+
+        </div>
 
         <div
             class="submission-modal"
@@ -215,35 +218,5 @@
             </div>
         </div>
 
-        <script>
-            (() => {
-                const modal = document.getElementById("submission-modal");
-                const openButton = document.getElementById("submit-record-button");
-                const closeButton = document.getElementById("submission-modal-close");
-                const closeButtonBottom = document.getElementById("submission-modal-close-button");
-
-                const closeModal = () => modal.classList.remove("is-open");
-
-                openButton.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    modal.classList.add("is-open");
-                });
-
-                closeButton.addEventListener("click", closeModal);
-                closeButtonBottom.addEventListener("click", closeModal);
-
-                modal.addEventListener("click", (event) => {
-                    if (event.target === modal) {
-                        closeModal();
-                    }
-                });
-
-                document.addEventListener("keydown", (event) => {
-                    if (event.key === "Escape") {
-                        closeModal();
-                    }
-                });
-            })();
-        </script>
     </body>
 </html>
