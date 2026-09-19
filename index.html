@@ -125,8 +125,7 @@
         <script src="https://unpkg.com/vue-router@4.0.14/dist/vue-router.global.prod.js"></script>
         <script type="module" src="js/main.js"></script>
     </head>
-    <body>
-        <div id="app">
+    <body id="app">
         <header :class="{ dark: store.dark }">
             <div class="logo">
                 <h2>CubeyGDPS Demon List</h2>
@@ -170,57 +169,7 @@
         </header>
         <router-view :class="{ dark: store.dark }"></router-view>
 
-        </div>
 
-        <div
-            class="submission-modal"
-            id="submission-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="submission-modal-title"
-        >
-            <div class="submission-modal__box">
-                <button
-                    class="submission-modal__close"
-                    id="submission-modal-close"
-                    type="button"
-                    aria-label="Close"
-                >
-                    &times;
-                </button>
-                <h2 id="submission-modal-title">Submit a Record</h2>
-                <p>
-                    Records can be submitted through the CubeyGDPS Discord server.
-                    Go to the <strong>#dl-submissions</strong> channel and include
-                    at least the following information in your message:
-                </p>
-                <ul>
-                    <li>Level name</li>
-                    <li>Level creator</li>
-                    <li>Level verifier</li>
-                    <li>Level publisher</li>
-                    <li>Link to your completion video</li>
-                    <li>Level ID</li>
-                </ul>
-                <div class="submission-modal__actions">
-                    <button
-                        class="submission-modal__button submission-modal__button--close"
-                        id="submission-modal-close-button"
-                        type="button"
-                    >
-                        Close
-                    </button>
-                    <a
-                        class="submission-modal__button submission-modal__button--discord"
-                        href="https://discord.com/invite/V8VujbJnUS"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Open Discord Server
-                    </a>
-                </div>
-            </div>
-        </div>
 
     </body>
 </html>
