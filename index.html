@@ -36,7 +36,7 @@
                 position: fixed;
                 inset: 0;
                 z-index: 1000;
-                display: none;
+                display: none !important;
                 align-items: center;
                 justify-content: center;
                 padding: 20px;
@@ -44,7 +44,11 @@
             }
 
             .submission-modal.is-open {
-                display: flex;
+                display: flex !important;
+            }
+
+            .submission-modal[hidden] {
+                display: none !important;
             }
 
             .submission-modal__box {
