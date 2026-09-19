@@ -1,0 +1,36 @@
+{
+    "id": 120,
+    "name": "be super bad wave",
+    "author": "olol",
+    "creators": [
+        "olol"
+    ],
+    "verifier": "olol",
+    "verification": "https://youtu.be/bPndXzYjvK4?si=d2KMbKvuBAfAWQ5z",
+    "percentToQualify": 100,
+    "password": "Free to copy",
+    "records": [
+        {
+            "user": "Wudja",
+            "link": "https://youtu.be/RqdzFj9GJms?si=PPEe7ueIBDyeruFL",
+            "percent": 100,
+            "fps": 90,
+            "mobile": true
+        },
+        {
+            "user": "Nautilus",
+            "link": "https://www.youtube.com/watch?v=tyNt8g7qhdU",
+            "percent": 100,
+            "fps": 240,
+            "mobile": false
+        },
+        {
+            "user": "LenUser",
+            "link": "https://medal.tv/games/geometry-dash/clips/nydezTDZnD2RPEbYO?invite=cr-MSxYeGwsNDEzMzI4NTk3",
+            "percent": 100,
+            "fps": 60,
+            "cbf": true,
+            "mobile": false
+        }
+    ]
+}
