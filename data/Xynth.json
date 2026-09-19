@@ -1,0 +1,19 @@
+{
+    "id": 128,
+    "name": "Xynth",
+    "author": "Nautilus",
+    "creators": ["Nautilus"],
+    "verifier": "Nautilus",
+    "verification": "https://www.youtube.com/watch?v=2Oewmjmv8Ww",
+    "percentToQualify": 80,
+    "password": "Free to copy",
+    "records": [
+        {
+            "user": "Wudja",
+            "link": "https://youtu.be/gBQ0oy2OV4s?si=o4cRqqSQ--a9LQZl",
+            "percent": 100,
+            "fps": 90,
+            "mobile": true
+        }
+    ]
+}
