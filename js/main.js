@@ -22,6 +22,7 @@ app.mount('#app');
 
 const modal = document.createElement('div');
 modal.className = 'submission-modal';
+modal.hidden = true;
 modal.id = 'submission-modal';
 modal.setAttribute('role', 'dialog');
 modal.setAttribute('aria-modal', 'true');
@@ -69,11 +70,15 @@ const openButton = document.getElementById('submit-record-button');
 const closeButton = document.getElementById('submission-modal-close');
 const closeButtonBottom = document.getElementById('submission-modal-close-button');
 
-const closeModal = () => modal.classList.remove('is-open');
+const closeModal = () => {
+    modal.classList.remove('is-open');
+    modal.hidden = true;
+};
 
 if (openButton) {
     openButton.addEventListener('click', (event) => {
         event.preventDefault();
+        modal.hidden = false;
         modal.classList.add('is-open');
     });
 }
