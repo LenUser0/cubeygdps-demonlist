@@ -1,0 +1,21 @@
+{
+    "id": 120,
+    "name": "super cube olol",
+    "author": "olol",
+    "creators": [
+        "olol"
+    ],
+    "verifier": "olol",
+    "verification": "https://www.youtube.com/watch?v=urwjh4v-Kgc",
+    "percentToQualify": 100,
+    "password": "Free to copy",
+    "records": [
+        {
+            "user": "Wudja",
+            "link": "https://www.youtube.com/watch?v=urwjh4v-Kgc",
+            "percent": 100,
+            "fps": 90,
+            "mobile": true
+        }
+    ]
+}
