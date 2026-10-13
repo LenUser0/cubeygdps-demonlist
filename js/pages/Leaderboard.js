@@ -98,7 +98,7 @@ export default {
         },
     },
     async mounted() {
-        const [leaderboard, err] = await fetchLeaderboard();
+        const [leaderboard, err] = await fetchLeaderboard(this.$route.query.list);
         this.leaderboard = leaderboard;
         this.err = err;
         // Hide loading spinner
