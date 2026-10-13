@@ -40,7 +40,8 @@ export default {
                 <div class="level" v-if="level">
                     <h1>{{ level.name }}</h1>
                     <LevelAuthors :author="level.author" :creators="level.creators" :verifier="level.verifier"></LevelAuthors>
-                    <iframe class="video" id="videoframe" :src="video" frameborder="0"></iframe>
+                    <iframe v-if="video" class="video" id="videoframe" :src="video" frameborder="0"></iframe>
+                    <p v-else>Placeholder level — awaiting entries.</p>
                     <ul class="stats">
                         <li>
                             <div class="type-title-sm">Points when completed</div>
@@ -142,6 +143,10 @@ export default {
                 return "";
             }
 
+            if (!this.level.verification) {
+                return "";
+            }
+
             if (!this.level.showcase) {
                 return embed(this.level.verification);
             }
@@ -155,7 +160,7 @@ export default {
     },
     async mounted() {
         try {
-            this.list = await fetchList();
+            this.list = await fetchList(this.$route.query.list);
             this.editors = await fetchEditors();
 
             // Error handling
