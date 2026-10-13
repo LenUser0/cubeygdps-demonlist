@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=1024" />
         <base href="/cubeygdps-demonlist/" />
-        <title>CubeyGDPS Demon List</title>
+        <title>CubeyGDPS Lists</title>
 
         <!-- Replace your server icon by uploading an image file named "list_icon.png"-->
         <link rel="icon" href="list_icon.png" />
@@ -148,10 +148,22 @@
     <body id="app">
         <header :class="{ dark: store.dark }">
             <div class="logo">
-                <h2>CubeyGDPS Demon List</h2>
-                <p>v1.0.1</p>
+                <h2>CubeyGDPS Lists</h2>
+                <p>v1.1.0</p>
             </div>
             <nav class="nav">
+                <label class="list-switcher-label" for="list-switcher">List</label>
+                <select
+                    class="list-switcher"
+                    id="list-switcher"
+                    aria-label="Choose a list"
+                    :value="$route.query.list || 'demon'"
+                    @change="changeList"
+                >
+                    <option value="demon">Demon List</option>
+                    <option value="challenge">Challenge List</option>
+                    <option value="impossible">Impossible Levels List</option>
+                </select>
                 <router-link class="nav__tab" to="/">
                     <span class="type-label-lg">List</span>
                 </router-link>
@@ -187,6 +199,6 @@
                 </div>
             </nav>
         </header>
-        <router-view :class="{ dark: store.dark }"></router-view>
+        <router-view :key="$route.fullPath" :class="{ dark: store.dark }"></router-view>
     </body>
 </html>
