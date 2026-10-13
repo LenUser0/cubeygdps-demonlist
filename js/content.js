@@ -1,17 +1,26 @@
 import { round, score } from './score.js';
 
 /**
- * Path to directory containing `_list.json` and all levels.
- *
- * Use document.baseURI instead of relying on the current page URL.
- * This keeps data loading working on GitHub Pages project sites such as
- * /cubeygdps-demonlist/.
+ * Each list has its own level index and level JSON files, while the page
+ * components and the shared editor information remain the same.
  */
-const dataUrl = (file) => new URL(`../data/${file}`, import.meta.url).href;
+const listSources = {
+    demon: { directory: '../data/', listFile: '_list.json' },
+    challenge: { directory: '../data/challenge/', listFile: '_list.json' },
+    impossible: { directory: '../data/impossible/', listFile: '_list.json' },
+};
 
-export async function fetchList() {
+const getListSource = (listId = 'demon') =>
+    listSources[listId] ?? listSources.demon;
+
+const dataUrl = (directory, file) =>
+    new URL(`${directory}${file}`, import.meta.url).href;
+
+export async function fetchList(listId = 'demon') {
+    const source = getListSource(listId);
+
     try {
-        const listResult = await fetch(dataUrl('_list.json'));
+        const listResult = await fetch(dataUrl(source.directory, source.listFile));
 
         if (!listResult.ok) {
             throw new Error(`HTTP ${listResult.status} while loading _list.json`);
@@ -26,7 +35,7 @@ export async function fetchList() {
         return await Promise.all(
             list.map(async (path, rank) => {
                 try {
-                    const levelResult = await fetch(dataUrl(`${path}.json`));
+                    const levelResult = await fetch(dataUrl(source.directory, `${path}.json`));
 
                     if (!levelResult.ok) {
                         throw new Error(
@@ -71,7 +80,7 @@ export async function fetchList() {
 
 export async function fetchEditors() {
     try {
-        const editorsResults = await fetch(dataUrl('_editors.json'));
+        const editorsResults = await fetch(dataUrl('../data/', '_editors.json'));
 
         if (!editorsResults.ok) {
             throw new Error(
@@ -87,11 +96,11 @@ export async function fetchEditors() {
     }
 }
 
-export async function fetchLeaderboard() {
-    const list = await fetchList();
+export async function fetchLeaderboard(listId = 'demon') {
+    const list = await fetchList(listId);
 
     if (!list) {
-        return [[], ['_list.json']];
+        return [[], [getListSource(listId).listFile]];
     }
 
     const scoreMap = {};
