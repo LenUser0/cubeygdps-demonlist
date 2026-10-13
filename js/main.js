@@ -10,6 +10,21 @@ export const store = Vue.reactive({
 
 const app = Vue.createApp({
     data: () => ({ store }),
+    methods: {
+        changeList(event) {
+            const list = event.target.value;
+            const current = router.currentRoute.value;
+            const query = { ...current.query };
+
+            if (list === 'demon') {
+                delete query.list;
+            } else {
+                query.list = list;
+            }
+
+            router.push({ path: current.path, query });
+        },
+    },
 });
 const router = VueRouter.createRouter({
     history: VueRouter.createWebHashHistory(),
