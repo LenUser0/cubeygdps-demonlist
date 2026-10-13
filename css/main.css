@@ -99,3 +99,20 @@ input[type="checkbox"] {
     cursor: pointer;
     margin: 0;
 }
+
+
+@media screen and (max-width: 1100px) {
+    header {
+        padding-inline: 1rem;
+    }
+
+    .nav .nav__actions .nav__icon {
+        width: 2.5rem;
+    }
+
+    .nav .nav__actions .nav__cta {
+        margin-left: 0.35rem;
+        padding: 0.65rem;
+        white-space: nowrap;
+    }
+}
