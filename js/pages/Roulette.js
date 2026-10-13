@@ -110,6 +110,7 @@ export default {
         useExtendedList: true,
         toasts: [],
         fileInput: undefined,
+        storageKey: 'roulette:demon',
     }),
     mounted() {
         // Create File Input
@@ -119,8 +120,12 @@ export default {
         this.fileInput.accept = '.json';
         this.fileInput.addEventListener('change', this.onImportUpload);
 
-        // Load progress from local storage
-        const roulette = JSON.parse(localStorage.getItem('roulette'));
+        // Keep progress separate for each list.
+        const listId = this.$route.query.list || 'demon';
+        this.storageKey = `roulette:${listId}`;
+        const saved = localStorage.getItem(this.storageKey) ??
+            (listId === 'demon' ? localStorage.getItem('roulette') : null);
+        const roulette = saved ? JSON.parse(saved) : null;
 
         if (!roulette) {
             return;
@@ -169,7 +174,7 @@ export default {
 
             this.loading = true;
 
-            const fullList = await fetchList();
+            const fullList = await fetchList(this.$route.query.list);
 
             if (fullList.filter(([_, err]) => err).length > 0) {
                 this.loading = false;
@@ -202,7 +207,7 @@ export default {
         },
         save() {
             localStorage.setItem(
-                'roulette',
+                this.storageKey,
                 JSON.stringify({
                     levels: this.levels,
                     progression: this.progression,
@@ -231,7 +236,7 @@ export default {
             this.givenUp = true;
 
             // Save progress
-            localStorage.removeItem('roulette');
+            localStorage.removeItem(this.storageKey);
         },
         onImport() {
             if (
