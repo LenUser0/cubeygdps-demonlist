@@ -279,16 +279,14 @@
                 return false;
             }
         }
-        if ($('.record-box').length) {
-            for (const box of $('.record-box')) {
-                for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="hz"]']) {
-                    const field = $(selector, box);
-                    if (!field.value.trim() || !field.checkValidity()) {
-                        field.reportValidity();
-                        field.focus();
-                        status.textContent = 'Complete each record you added, or remove it.';
-                        return false;
-                    }
+        for (const box of $$('.record-box')) {
+            for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="hz"]']) {
+                const field = $(selector, box);
+                if (!field.value.trim() || !field.checkValidity()) {
+                    field.reportValidity();
+                    field.focus();
+                    status.textContent = 'Complete each record you added, or remove it.';
+                    return false;
                 }
             }
         }
