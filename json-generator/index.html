@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Level JSON Generator | CubeyGDPS Lists</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f5f5f7;
+            --panel: #fff;
+            --text: #202027;
+            --muted: #666675;
+            --border: #e0e0e7;
+            --field: #fff;
+            --orange: #ff8c00;
+            --orange-dark: #bd5e00;
+            --soft-orange: #fff0dc;
+            --code: #191a20;
+            --code-text: #f5f5fa;
+            font-family: "Lexend Deca", sans-serif;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; }
+        body.dark {
+            color-scheme: dark;
+            --bg: #17171b; --panel: #222228; --text: #f4f4f8; --muted: #b2b2c0;
+            --border: #3c3c46; --field: #19191f; --orange: #d97706; --orange-dark: #ffb45e;
+            --soft-orange: #3a2a19; --code: #101014; --code-text: #f5f5fa;
+        }
+        header {
+            min-height: 68px; padding: 12px max(22px, calc((100vw - 1240px) / 2));
+            display: flex; align-items: center; justify-content: space-between; gap: 18px;
+            background: var(--orange); color: white; box-shadow: 0 2px 10px #00000012;
+        }
+        .brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+        .brand strong { font-size: 1.12rem; }
+        .brand span { font-size: .8rem; opacity: .88; }
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        a { color: inherit; }
+        .header-link, .theme-button {
+            border: 1px solid #ffffff75; color: white; background: #8c45001c;
+            padding: 9px 12px; border-radius: 9px; text-decoration: none; font: inherit;
+            font-size: .85rem; font-weight: 600; cursor: pointer;
+        }
+        .header-link:hover, .theme-button:hover { background: #8c450033; }
+        main { max-width: 1240px; margin: 30px auto 60px; padding: 0 22px; }
+        .intro { margin-bottom: 24px; }
+        h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.15; letter-spacing: -.04em; margin: 0 0 10px; }
+        .intro p { margin: 0; color: var(--muted); line-height: 1.65; max-width: 760px; }
+        .layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr); gap: 22px; align-items: start; }
+        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 18px #00000008; }
+        .panel-head { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        h2 { font-size: 1.08rem; margin: 0; }
+        .panel-body { padding: 20px; }
+        .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .field { min-width: 0; border: 1px solid var(--border); border-radius: 11px; padding: 12px; }
+        .field.full { grid-column: 1 / -1; }
+        .field.disabled { opacity: .65; }
+        .field-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+        .field-top label { font-weight: 600; font-size: .86rem; overflow-wrap: anywhere; }
+        .field-top code { color: var(--muted); font-size: .73rem; }
+        input[type="checkbox"] { accent-color: var(--orange-dark); width: 17px; height: 17px; cursor: pointer; }
+        input[type="text"], input[type="number"], input[type="url"], textarea, select {
+            display: block; width: 100%; min-width: 0; background: var(--field); color: var(--text);
+            border: 1px solid var(--border); border-radius: 8px; padding: 10px 11px;
+            font: inherit; font-size: .86rem; outline: none;
+        }
+        textarea { min-height: 86px; resize: vertical; line-height: 1.5; }
+        input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
+            outline: 2px solid var(--orange-dark); outline-offset: 2px;
+        }
+        input:disabled, textarea:disabled { opacity: .55; cursor: not-allowed; }
+        .hint { color: var(--muted); font-size: .76rem; line-height: 1.5; margin: 8px 0 0; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
+        button { font-family: inherit; }
+        .small-button { border: 1px solid var(--border); background: var(--panel); color: var(--text); padding: 8px 10px; border-radius: 8px; font-size: .78rem; font-weight: 600; cursor: pointer; }
+        .small-button:hover { border-color: var(--orange-dark); }
+        .primary-button { background: var(--orange); border: 1px solid var(--orange); color: white; padding: 11px 14px; border-radius: 9px; font-size: .86rem; font-weight: 700; cursor: pointer; }
+        .primary-button:hover { filter: brightness(.96); }
+        .record-box { margin-top: 16px; border: 1px dashed var(--border); padding: 14px; border-radius: 11px; }
+        .record-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .record-head strong { font-size: .88rem; }
+        .record-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .record-grid label { display: block; font-size: .75rem; color: var(--muted); margin-bottom: 6px; }
+        .record-options { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
+        .check-label { display: inline-flex; align-items: center; gap: 7px; font-size: .82rem; }
+        .preview-panel { position: sticky; top: 18px; }
+        .preview-panel .panel-body { padding: 0; }
+        .preview-note { padding: 14px 20px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: .8rem; line-height: 1.5; }
+        pre { margin: 0; padding: 20px; min-height: 340px; max-height: 60vh; overflow: auto; background: var(--code); color: var(--code-text); font: 13px/1.65 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre; tab-size: 4; }
+        .preview-actions { padding: 14px 20px; display: flex; flex-wrap: wrap; gap: 9px; border-top: 1px solid var(--border); }
+        .status { align-self: center; color: var(--muted); font-size: .78rem; min-height: 1em; }
+        .notice { background: var(--soft-orange); border-radius: 10px; padding: 12px 14px; font-size: .8rem; line-height: 1.55; margin-top: 16px; }
+        footer { text-align: center; color: var(--muted); padding: 0 20px 28px; font-size: .78rem; }
+        @media (max-width: 850px) {
+            .layout { grid-template-columns: 1fr; }
+            .preview-panel { position: static; }
+            pre { max-height: 50vh; }
+        }
+        @media (max-width: 540px) {
+            header { align-items: flex-start; flex-direction: column; padding: 14px 18px; }
+            main { margin-top: 22px; padding: 0 14px; }
+            .panel-head, .panel-body { padding: 15px; }
+            .field-grid { grid-template-columns: 1fr; }
+            .field.full { grid-column: auto; }
+            .record-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand"><strong>CubeyGDPS Lists</strong><span>Level JSON Generator</span></div>
+        <div class="header-actions">
+            <a class="header-link" href="../">← Back to lists</a>
+            <button class="theme-button" id="theme-toggle" type="button" aria-label="Toggle dark mode">☾ Theme</button>
+        </div>
+    </header>
+    <main>
+        <section class="intro">
+            <h1>Level JSON Generator</h1>
+            <p>Build a level JSON file without hand-writing the syntax. Choose the fields you want, fill them in, and copy the generated JSON. The preview updates as you type.</p>
+        </section>
+        <div class="layout">
+            <section class="panel">
+                <div class="panel-head">
+                    <h2>1. Choose fields and enter details</h2>
+                    <div class="toolbar">
+                        <button class="small-button" id="select-all" type="button">Select all</button>
+                        <button class="small-button" id="clear-all" type="button">Clear fields</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="field-grid">
+                        <div class="field" data-field="id">
+                            <div class="field-top"><label for="value-id">Level ID</label><input type="checkbox" data-include="id" checked aria-label="Include id"></div>
+                            <input id="value-id" type="text" placeholder="12345678 or TBD" value="">
+                            <p class="hint">Numbers are exported as numbers; other values remain text.</p>
+                        </div>
+                        <div class="field" data-field="name">
+                            <div class="field-top"><label for="value-name">Level name</label><input type="checkbox" data-include="name" checked aria-label="Include name"></div>
+                            <input id="value-name" type="text" placeholder="MyLevel">
+                        </div>
+                        <div class="field" data-field="author">
+                            <div class="field-top"><label for="value-author">Uploader / author</label><input type="checkbox" data-include="author" checked aria-label="Include author"></div>
+                            <input id="value-author" type="text" placeholder="LevelUploader">
+                        </div>
+                        <div class="field" data-field="creators">
+                            <div class="field-top"><label for="value-creators">Creators</label><input type="checkbox" data-include="creators" checked aria-label="Include creators"></div>
+                            <textarea id="value-creators" placeholder="Creator1&#10;Creator2"></textarea>
+                            <p class="hint">Separate creators with commas or new lines.</p>
+                        </div>
+                        <div class="field" data-field="verifier">
+                            <div class="field-top"><label for="value-verifier">Verifier</label><input type="checkbox" data-include="verifier" checked aria-label="Include verifier"></div>
+                            <input id="value-verifier" type="text" placeholder="VerifierName">
+                        </div>
+                        <div class="field" data-field="verification">
+                            <div class="field-top"><label for="value-verification">Verification video</label><input type="checkbox" data-include="verification" checked aria-label="Include verification"></div>
+                            <input id="value-verification" type="url" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+                        <div class="field" data-field="percentToQualify">
+                            <div class="field-top"><label for="value-percent">Percent to qualify</label><input type="checkbox" data-include="percentToQualify" checked aria-label="Include percentToQualify"></div>
+                            <input id="value-percent" type="number" min="0" max="100" step="1" value="100">
+                        </div>
+                        <div class="field" data-field="password">
+                            <div class="field-top"><label for="value-password">Password / copy info</label><input type="checkbox" data-include="password" checked aria-label="Include password"></div>
+                            <input id="value-password" type="text" placeholder="Not Copyable">
+                        </div>
+                        <div class="field full" data-field="records">
+                            <div class="field-top">
+                                <label>Player records</label>
+                                <input type="checkbox" data-include="records" checked aria-label="Include records">
+                            </div>
+                            <p class="hint">Records are optional. If included, an empty records array is generated until you add one.</p>
+                            <div id="records-container"></div>
+                            <button class="small-button" id="add-record" type="button" style="margin-top:12px">＋ Add record</button>
+                        </div>
+                    </div>
+                    <div class="notice"><strong>Tip:</strong> Fields you untick are omitted entirely from the JSON. Keep fields required by the list website enabled, unless you know the website can work without them.</div>
+                </div>
+            </section>
+            <section class="panel preview-panel">
+                <div class="panel-head"><h2>2. JSON preview</h2><span class="status" id="field-count">9 fields</span></div>
+                <div class="preview-note">This is the exact JSON output. Copy it into a new <code>.json</code> level file, then add that filename to the correct list index file.</div>
+                <div class="panel-body"><pre id="json-output" aria-label="Generated JSON" tabindex="0">{}</pre></div>
+                <div class="preview-actions">
+                    <button class="primary-button" id="copy-json" type="button">Copy JSON</button>
+                    <button class="small-button" id="download-json" type="button">Download .json</button>
+                    <button class="small-button" id="reset-form" type="button">Reset form</button>
+                    <span class="status" id="copy-status" role="status" aria-live="polite"></span>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer>Runs in your browser — the form content is not sent to a server.</footer>
+<script>
+(() => {
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const recordsContainer = $('#records-container');
+    const output = $('#json-output');
+    const status = $('#copy-status');
+    let recordCounter = 0;
+
+    function addRecord() {
+        const id = ++recordCounter;
+        const box = document.createElement('div');
+        box.className = 'record-box';
+        box.dataset.recordId = String(id);
+        box.innerHTML = `
+            <div class="record-head">
+                <strong>Record ${id}</strong>
+                <button class="small-button remove-record" type="button">Remove</button>
+            </div>
+            <div class="record-grid">
+                <div><label for="record-user-${id}">Player name</label><input id="record-user-${id}" data-record="user" type="text" placeholder="PlayerName"></div>
+                <div><label for="record-link-${id}">Proof link</label><input id="record-link-${id}" data-record="link" type="url" placeholder="https://..."></div>
+                <div><label for="record-percent-${id}">Percent</label><input id="record-percent-${id}" data-record="percent" type="number" min="0" max="100" step="1" value="100"></div>
+                <div><label for="record-hz-${id}">Refresh rate (Hz)</label><input id="record-hz-${id}" data-record="hz" type="number" min="1" step="1" value="360"></div>
+            </div>
+            <div class="record-options">
+                <label class="check-label"><input data-record="mobile" type="checkbox"> Mobile</label>
+                <label class="check-label"><input data-record="cbf" type="checkbox"> CBF</label>
+            </div>`;
+        recordsContainer.appendChild(box);
+        box.querySelector('.remove-record').addEventListener('click', () => {
+            box.remove();
+            updatePreview();
+        });
+        $$('input', box).forEach(input => input.addEventListener('input', updatePreview));
+        updatePreview();
+    }
+
+    function readRecords() {
+        return $$('.record-box', recordsContainer).map(box => {
+            const record = {};
+            const user = $('[data-record="user"]', box).value.trim();
+            const link = $('[data-record="link"]', box).value.trim();
+            const percent = $('[data-record="percent"]', box).value;
+            const hz = $('[data-record="hz"]', box).value;
+            if (user) record.user = user;
+            if (link) record.link = link;
+            if (percent !== '') record.percent = Number(percent);
+            if (hz !== '') record.hz = Number(hz);
+            if ($('[data-record="mobile"]', box).checked) record.mobile = true;
+            if ($('[data-record="cbf"]', box).checked) record.cbf = true;
+            return record;
+        }).filter(record => Object.keys(record).length > 0);
+    }
+
+    function getData() {
+        const data = {};
+        const include = key => $('[data-include="' + key + '"]').checked;
+        const text = id => $(id).value.trim();
+        if (include('id')) {
+            const value = text('#value-id');
+            if (value) data.id = /^-?\d+$/.test(value) ? Number(value) : value;
+        }
+        if (include('name')) data.name = text('#value-name');
+        if (include('author')) data.author = text('#value-author');
+        if (include('creators')) {
+            data.creators = text('#value-creators').split(/[\n,]+/).map(value => value.trim()).filter(Boolean);
+        }
+        if (include('verifier')) data.verifier = text('#value-verifier');
+        if (include('verification')) data.verification = text('#value-verification');
+        if (include('percentToQualify')) {
+            const value = text('#value-percent');
+            data.percentToQualify = value === '' ? null : Number(value);
+        }
+        if (include('password')) data.password = text('#value-password');
+        if (include('records')) data.records = readRecords();
+        return data;
+    }
+
+    function updatePreview() {
+        const data = getData();
+        output.textContent = JSON.stringify(data, null, 4);
+        $('#field-count').textContent = Object.keys(data).length + (Object.keys(data).length === 1 ? ' field' : ' fields');
+        $$('[data-include]').forEach(checkbox => {
+            const field = checkbox.closest('.field');
+            field.classList.toggle('disabled', !checkbox.checked);
+            $$('input:not([type="checkbox"]), textarea', field).forEach(input => input.disabled = !checkbox.checked);
+            const add = $('#add-record', field);
+            if (add) add.disabled = !checkbox.checked;
+            if (checkbox.dataset.include === 'records') {
+                $$('.record-box input, .record-box button', field).forEach(input => input.disabled = !checkbox.checked);
+            }
+        });
+    }
+
+    $$('input, textarea').forEach(input => input.addEventListener('input', updatePreview));
+    $$('[data-include]').forEach(input => input.addEventListener('change', updatePreview));
+    $('#add-record').addEventListener('click', addRecord);
+    $('#select-all').addEventListener('click', () => {
+        $$('[data-include]').forEach(input => input.checked = true);
+        updatePreview();
+    });
+    $('#clear-all').addEventListener('click', () => {
+        $$('[data-include]').forEach(input => input.checked = false);
+        updatePreview();
+    });
+    $('#copy-json').addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(output.textContent);
+            status.textContent = 'Copied!';
+        } catch {
+            const range = document.createRange();
+            range.selectNodeContents(output);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            status.textContent = 'Select and copy the highlighted JSON.';
+        }
+        window.setTimeout(() => status.textContent = '', 2800);
+    });
+    $('#download-json').addEventListener('click', () => {
+        const name = ($('#value-name').value.trim() || 'level').replace(/[^a-z0-9_-]+/gi, '_');
+        const blob = new Blob([output.textContent + '\n'], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = name + '.json';
+        link.click();
+        URL.revokeObjectURL(url);
+    });
+    $('#reset-form').addEventListener('click', () => {
+        $$('[data-include]').forEach(input => input.checked = true);
+        $('#value-id').value = '';
+        $('#value-name').value = '';
+        $('#value-author').value = '';
+        $('#value-creators').value = '';
+        $('#value-verifier').value = '';
+        $('#value-verification').value = '';
+        $('#value-percent').value = '100';
+        $('#value-password').value = '';
+        recordsContainer.replaceChildren();
+        recordCounter = 0;
+        status.textContent = '';
+        updatePreview();
+    });
+    $('#theme-toggle').addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('json-generator-dark', document.body.classList.contains('dark') ? 'true' : 'false');
+    });
+    if (localStorage.getItem('json-generator-dark') === 'true') document.body.classList.add('dark');
+    updatePreview();
+})();
+</script>
+</body>
+</html>
