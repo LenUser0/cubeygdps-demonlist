@@ -299,7 +299,7 @@
             status.textContent = 'Enter a valid showcase video URL, or leave it empty.';
             return false;
         }
-        for (const box of $('.record-box')) {
+        for (const box of $$('.record-box')) {
             for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="fps-value"]']) {
                 const field = $(selector, box);
                 if (!field.value.trim() || !field.checkValidity()) {
