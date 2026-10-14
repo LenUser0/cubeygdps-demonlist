@@ -231,7 +231,7 @@
             box.remove();
             updatePreview();
         });
-        $('input, select', box).forEach(input => {
+        $$('input, select', box).forEach(input => {
             input.addEventListener('input', updatePreview);
             input.addEventListener('change', updatePreview);
         });
