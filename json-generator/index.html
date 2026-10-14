@@ -157,6 +157,11 @@
                             <div class="field-top"><label for="value-verification">Verification video *</label><code>verification</code></div>
                             <input id="value-verification" type="url" placeholder="https://www.youtube.com/watch?v=..." required>
                         </div>
+                        <div class="field" data-field="showcase">
+                            <div class="field-top"><label for="value-showcase">Showcase video</label><code>showcase</code></div>
+                            <input id="value-showcase" type="url" placeholder="Optional: https://www.youtube.com/watch?v=...">
+                            <p class="hint">Optional. If omitted, the site uses the verification video.</p>
+                        </div>
                         <div class="field" data-field="percentToQualify">
                             <div class="field-top"><label for="value-percent">Percent to qualify *</label><code>percentToQualify</code></div>
                             <input id="value-percent" type="number" min="0" max="100" step="1" value="100" required>
@@ -214,7 +219,8 @@
                 <div><label for="record-user-${id}">Player name</label><input id="record-user-${id}" data-record="user" type="text" placeholder="PlayerName"></div>
                 <div><label for="record-link-${id}">Proof link</label><input id="record-link-${id}" data-record="link" type="url" placeholder="https://..."></div>
                 <div><label for="record-percent-${id}">Percent</label><input id="record-percent-${id}" data-record="percent" type="number" min="0" max="100" step="1" value="100"></div>
-                <div><label for="record-hz-${id}">Refresh rate (Hz)</label><input id="record-hz-${id}" data-record="hz" type="number" min="1" step="1" value="360"></div>
+                <div><label for="record-fps-${id}">FPS value</label><input id="record-fps-${id}" data-record="fps-value" type="number" min="1" step="1" value="360"></div>
+                <div><label for="record-fps-key-${id}">JSON field name</label><select id="record-fps-key-${id}" data-record="fps-key"><option value="fps" selected>fps (current format)</option><option value="hz">hz (legacy format)</option></select></div>
             </div>
             <div class="record-options">
                 <label class="check-label"><input data-record="mobile" type="checkbox"> Mobile</label>
@@ -235,11 +241,12 @@
             const user = $('[data-record="user"]', box).value.trim();
             const link = $('[data-record="link"]', box).value.trim();
             const percent = $('[data-record="percent"]', box).value;
-            const hz = $('[data-record="hz"]', box).value;
+            const fps = $('[data-record="fps-value"]', box).value;
+            const fpsKey = $('[data-record="fps-key"]', box).value;
             if (user) record.user = user;
             if (link) record.link = link;
             if (percent !== '') record.percent = Number(percent);
-            if (hz !== '') record.hz = Number(hz);
+            if (fps !== '') record[fpsKey] = Number(fps);
             if ($('[data-record="mobile"]', box).checked) record.mobile = true;
             if ($('[data-record="cbf"]', box).checked) record.cbf = true;
             return record;
@@ -249,7 +256,7 @@
     function getData() {
         const text = id => $(id).value.trim();
         const idValue = text('#value-id');
-        return {
+        const data = {
             id: /^-?\\d+$/.test(idValue) ? Number(idValue) : idValue,
             name: text('#value-name'),
             author: text('#value-author'),
@@ -260,6 +267,9 @@
             password: text('#value-password'),
             records: readRecords()
         };
+        const showcase = text('#value-showcase');
+        if (showcase) data.showcase = showcase;
+        return data;
     }
 
     function updatePreview() {
@@ -279,8 +289,15 @@
                 return false;
             }
         }
-        for (const box of $$('.record-box')) {
-            for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="hz"]']) {
+        const showcase = $('#value-showcase');
+        if (showcase.value.trim() && !showcase.checkValidity()) {
+            showcase.reportValidity();
+            showcase.focus();
+            status.textContent = 'Enter a valid showcase video URL, or leave it empty.';
+            return false;
+        }
+        for (const box of $('.record-box')) {
+            for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="fps-value"]']) {
                 const field = $(selector, box);
                 if (!field.value.trim() || !field.checkValidity()) {
                     field.reportValidity();
@@ -326,6 +343,7 @@
         $('#value-creators').value = '';
         $('#value-verifier').value = '';
         $('#value-verification').value = '';
+        $('#value-showcase').value = '';
         $('#value-percent').value = '100';
         $('#value-password').value = '';
         recordsContainer.replaceChildren();
