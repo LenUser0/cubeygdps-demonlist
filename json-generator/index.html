@@ -122,64 +122,59 @@
     <main>
         <section class="intro">
             <h1>Level JSON Generator</h1>
-            <p>Build a level JSON file without hand-writing the syntax. Choose the fields you want, fill them in, and copy the generated JSON. The preview updates as you type.</p>
+            <p>Build a level JSON file without hand-writing the syntax. Fill in every required field and copy the generated JSON. Player records are optional, so leave that section empty if the level has no records.</p>
         </section>
         <div class="layout">
             <section class="panel">
                 <div class="panel-head">
-                    <h2>1. Choose fields and enter details</h2>
-                    <div class="toolbar">
-                        <button class="small-button" id="select-all" type="button">Select all</button>
-                        <button class="small-button" id="clear-all" type="button">Clear fields</button>
-                    </div>
+                    <h2>1. Enter level details</h2>
                 </div>
                 <div class="panel-body">
                     <div class="field-grid">
                         <div class="field" data-field="id">
-                            <div class="field-top"><label for="value-id">Level ID</label><input type="checkbox" data-include="id" checked aria-label="Include id"></div>
-                            <input id="value-id" type="text" placeholder="12345678 or TBD" value="">
+                            <div class="field-top"><label for="value-id">Level ID <span aria-hidden="true">*</span></label><code>id</code></div>
+                            <input id="value-id" type="text" placeholder="12345678 or TBD" required>
                             <p class="hint">Numbers are exported as numbers; other values remain text.</p>
                         </div>
                         <div class="field" data-field="name">
-                            <div class="field-top"><label for="value-name">Level name</label><input type="checkbox" data-include="name" checked aria-label="Include name"></div>
-                            <input id="value-name" type="text" placeholder="MyLevel">
+                            <div class="field-top"><label for="value-name">Level name *</label><code>name</code></div>
+                            <input id="value-name" type="text" placeholder="MyLevel" required>
                         </div>
                         <div class="field" data-field="author">
-                            <div class="field-top"><label for="value-author">Uploader / author</label><input type="checkbox" data-include="author" checked aria-label="Include author"></div>
-                            <input id="value-author" type="text" placeholder="LevelUploader">
+                            <div class="field-top"><label for="value-author">Uploader / author *</label><code>author</code></div>
+                            <input id="value-author" type="text" placeholder="LevelUploader" required>
                         </div>
                         <div class="field" data-field="creators">
-                            <div class="field-top"><label for="value-creators">Creators</label><input type="checkbox" data-include="creators" checked aria-label="Include creators"></div>
-                            <textarea id="value-creators" placeholder="Creator1&#10;Creator2"></textarea>
+                            <div class="field-top"><label for="value-creators">Creators *</label><code>creators</code></div>
+                            <textarea id="value-creators" placeholder="Creator1&#10;Creator2" required></textarea>
                             <p class="hint">Separate creators with commas or new lines.</p>
                         </div>
                         <div class="field" data-field="verifier">
-                            <div class="field-top"><label for="value-verifier">Verifier</label><input type="checkbox" data-include="verifier" checked aria-label="Include verifier"></div>
-                            <input id="value-verifier" type="text" placeholder="VerifierName">
+                            <div class="field-top"><label for="value-verifier">Verifier *</label><code>verifier</code></div>
+                            <input id="value-verifier" type="text" placeholder="VerifierName" required>
                         </div>
                         <div class="field" data-field="verification">
-                            <div class="field-top"><label for="value-verification">Verification video</label><input type="checkbox" data-include="verification" checked aria-label="Include verification"></div>
-                            <input id="value-verification" type="url" placeholder="https://www.youtube.com/watch?v=...">
+                            <div class="field-top"><label for="value-verification">Verification video *</label><code>verification</code></div>
+                            <input id="value-verification" type="url" placeholder="https://www.youtube.com/watch?v=..." required>
                         </div>
                         <div class="field" data-field="percentToQualify">
-                            <div class="field-top"><label for="value-percent">Percent to qualify</label><input type="checkbox" data-include="percentToQualify" checked aria-label="Include percentToQualify"></div>
-                            <input id="value-percent" type="number" min="0" max="100" step="1" value="100">
+                            <div class="field-top"><label for="value-percent">Percent to qualify *</label><code>percentToQualify</code></div>
+                            <input id="value-percent" type="number" min="0" max="100" step="1" value="100" required>
                         </div>
                         <div class="field" data-field="password">
-                            <div class="field-top"><label for="value-password">Password / copy info</label><input type="checkbox" data-include="password" checked aria-label="Include password"></div>
-                            <input id="value-password" type="text" placeholder="Not Copyable">
+                            <div class="field-top"><label for="value-password">Password / copy info *</label><code>password</code></div>
+                            <input id="value-password" type="text" placeholder="Not Copyable" required>
                         </div>
                         <div class="field full" data-field="records">
                             <div class="field-top">
-                                <label>Player records</label>
-                                <input type="checkbox" data-include="records" checked aria-label="Include records">
+                                <label>Player records</label><code>records</code>
                             </div>
-                            <p class="hint">Records are optional. If included, an empty records array is generated until you add one.</p>
+                            <p class="hint">You can leave this section empty if the level has no records. The JSON will still include <code>"records": []</code>. If you add a record, complete all its required fields.</p>
                             <div id="records-container"></div>
                             <button class="small-button" id="add-record" type="button" style="margin-top:12px">＋ Add record</button>
                         </div>
                     </div>
-                    <div class="notice"><strong>Tip:</strong> Fields you untick are omitted entirely from the JSON. Keep fields required by the list website enabled, unless you know the website can work without them.</div>
+                    <div class="notice"><strong>* Required:</strong> Every level field above must be filled in. Records are the only optional section; if there are no records, leave it empty.</div>
                 </div>
             </section>
             <section class="panel preview-panel">
@@ -302,7 +297,35 @@
         $$('[data-include]').forEach(input => input.checked = false);
         updatePreview();
     });
+    function validateForm() {
+        const required = ['#value-id', '#value-name', '#value-author', '#value-creators', '#value-verifier', '#value-verification', '#value-percent', '#value-password'];
+        for (const selector of required) {
+            const field = $(selector);
+            if (!field.value.trim() || !field.checkValidity()) {
+                field.reportValidity();
+                field.focus();
+                status.textContent = 'Complete all required fields first.';
+                return false;
+            }
+        }
+        if ($('.record-box').length) {
+            for (const box of $('.record-box')) {
+                for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="hz"]']) {
+                    const field = $(selector, box);
+                    if (!field.value.trim() || !field.checkValidity()) {
+                        field.reportValidity();
+                        field.focus();
+                        status.textContent = 'Complete each record you added, or remove it.';
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     $('#copy-json').addEventListener('click', async () => {
+        if (!validateForm()) return;
         try {
             await navigator.clipboard.writeText(output.textContent);
             status.textContent = 'Copied!';
@@ -317,6 +340,7 @@
         window.setTimeout(() => status.textContent = '', 2800);
     });
     $('#download-json').addEventListener('click', () => {
+        if (!validateForm()) return;
         const name = ($('#value-name').value.trim() || 'level').replace(/[^a-z0-9_-]+/gi, '_');
         const blob = new Blob([output.textContent + '\n'], { type: 'application/json;charset=utf-8' });
         const url = URL.createObjectURL(blob);
