@@ -92,6 +92,12 @@ For a mobile record, add:
 "mobile": true
 ```
 
+For a record achieved using CBF, add:
+
+```json
+"cbf": true
+```
+
 For example:
 
 ```json
@@ -100,7 +106,8 @@ For example:
     "link": "https://www.youtube.com/watch?v=VIDEO_ID",
     "percent": 100,
     "hz": 60,
-    "mobile": true
+    "mobile": true,
+    "cbf": true
 }
 ```
 
