@@ -247,56 +247,105 @@
     }
 
     function getData() {
-        const data = {};
-        const include = key => $('[data-include="' + key + '"]').checked;
         const text = id => $(id).value.trim();
-        if (include('id')) {
-            const value = text('#value-id');
-            if (value) data.id = /^-?\d+$/.test(value) ? Number(value) : value;
-        }
-        if (include('name')) data.name = text('#value-name');
-        if (include('author')) data.author = text('#value-author');
-        if (include('creators')) {
-            data.creators = text('#value-creators').split(/[\n,]+/).map(value => value.trim()).filter(Boolean);
-        }
-        if (include('verifier')) data.verifier = text('#value-verifier');
-        if (include('verification')) data.verification = text('#value-verification');
-        if (include('percentToQualify')) {
-            const value = text('#value-percent');
-            data.percentToQualify = value === '' ? null : Number(value);
-        }
-        if (include('password')) data.password = text('#value-password');
-        if (include('records')) data.records = readRecords();
-        return data;
+        const idValue = text('#value-id');
+        return {
+            id: /^-?\\d+$/.test(idValue) ? Number(idValue) : idValue,
+            name: text('#value-name'),
+            author: text('#value-author'),
+            creators: text('#value-creators').split(/[\\n,]+/).map(value => value.trim()).filter(Boolean),
+            verifier: text('#value-verifier'),
+            verification: text('#value-verification'),
+            percentToQualify: text('#value-percent') === '' ? null : Number(text('#value-percent')),
+            password: text('#value-password'),
+            records: readRecords()
+        };
     }
 
     function updatePreview() {
         const data = getData();
         output.textContent = JSON.stringify(data, null, 4);
-        $('#field-count').textContent = Object.keys(data).length + (Object.keys(data).length === 1 ? ' field' : ' fields');
-        $$('[data-include]').forEach(checkbox => {
-            const field = checkbox.closest('.field');
-            field.classList.toggle('disabled', !checkbox.checked);
-            $$('input:not([type="checkbox"]), textarea', field).forEach(input => input.disabled = !checkbox.checked);
-            const add = $('#add-record', field);
-            if (add) add.disabled = !checkbox.checked;
-            if (checkbox.dataset.include === 'records') {
-                $$('.record-box input, .record-box button', field).forEach(input => input.disabled = !checkbox.checked);
-            }
-        });
+        $('#field-count').textContent = Object.keys(data).length + ' fields';
     }
 
-    $$('input, textarea').forEach(input => input.addEventListener('input', updatePreview));
-    $$('[data-include]').forEach(input => input.addEventListener('change', updatePreview));
+    function validateForm() {
+        const required = ['#value-id', '#value-name', '#value-author', '#value-creators', '#value-verifier', '#value-verification', '#value-percent', '#value-password'];
+        for (const selector of required) {
+            const field = $(selector);
+            if (!field.value.trim() || !field.checkValidity()) {
+                field.reportValidity();
+                field.focus();
+                status.textContent = 'Complete all required fields first.';
+                return false;
+            }
+        }
+        if ($('.record-box').length) {
+            for (const box of $('.record-box')) {
+                for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="hz"]']) {
+                    const field = $(selector, box);
+                    if (!field.value.trim() || !field.checkValidity()) {
+                        field.reportValidity();
+                        field.focus();
+                        status.textContent = 'Complete each record you added, or remove it.';
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    $('#copy-json').addEventListener('click', async () => {
+        if (!validateForm()) return;
+        try {
+            await navigator.clipboard.writeText(output.textContent);
+            status.textContent = 'Copied!';
+        } catch {
+            const range = document.createRange();
+            range.selectNodeContents(output);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            status.textContent = 'Select and copy the highlighted JSON.';
+        }
+        window.setTimeout(() => status.textContent = '', 2800);
+    });
+    $('#download-json').addEventListener('click', () => {
+        if (!validateForm()) return;
+        const name = ($('#value-name').value.trim() || 'level').replace(/[^a-z0-9_-]+/gi, '_');
+        const blob = new Blob([output.textContent + '\n'], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = name + '.json';
+        link.click();
+        URL.revokeObjectURL(url);
+    });
+    $('#reset-form').addEventListener('click', () => {
+        $('#value-id').value = '';
+        $('#value-name').value = '';
+        $('#value-author').value = '';
+        $('#value-creators').value = '';
+        $('#value-verifier').value = '';
+        $('#value-verification').value = '';
+        $('#value-percent').value = '100';
+        $('#value-password').value = '';
+        recordsContainer.replaceChildren();
+        recordCounter = 0;
+        status.textContent = '';
+        updatePreview();
+    });
+    $('#theme-toggle').addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('json-generator-dark', document.body.classList.contains('dark') ? 'true' : 'false');
+    });
+    if (localStorage.getItem('json-generator-dark') === 'true') document.body.classList.add('dark');
+    updatePreview();
+})();
+</script>
+</body>
+</html    $$('input, textarea').forEach(input => input.addEventListener('input', updatePreview));
     $('#add-record').addEventListener('click', addRecord);
-    $('#select-all').addEventListener('click', () => {
-        $$('[data-include]').forEach(input => input.checked = true);
-        updatePreview();
-    });
-    $('#clear-all').addEventListener('click', () => {
-        $$('[data-include]').forEach(input => input.checked = false);
-        updatePreview();
-    });
     function validateForm() {
         const required = ['#value-id', '#value-name', '#value-author', '#value-creators', '#value-verifier', '#value-verification', '#value-percent', '#value-password'];
         for (const selector of required) {
