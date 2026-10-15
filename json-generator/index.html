@@ -290,7 +290,7 @@
         if (showcase.value.trim() && !showcase.checkValidity()) return false;
 
         // Records are optional, but every record added must be complete.
-        for (const box of $('.record-box', recordsContainer)) {
+        for (const box of $$('.record-box', recordsContainer)) {
             for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="fps-value"]']) {
                 const field = $(selector, box);
                 if (!field.value.trim() || !field.checkValidity()) return false;
