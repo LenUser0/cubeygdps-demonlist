@@ -393,87 +393,17 @@
         localStorage.setItem('json-generator-dark', document.body.classList.contains('dark') ? 'true' : 'false');
     });
     if (localStorage.getItem('json-generator-dark') === 'true') document.body.classList.add('dark');
-    updatePreview();
-})();
-</script>
-</body>
-</html    $$('input, textarea').forEach(input => input.addEventListener('input', updatePreview));
-    $('#add-record').addEventListener('click', addRecord);
-    function validateForm() {
-        const required = ['#value-id', '#value-name', '#value-author', '#value-creators', '#value-verifier', '#value-verification', '#value-percent', '#value-password'];
-        for (const selector of required) {
-            const field = $(selector);
-            if (!field.value.trim() || !field.checkValidity()) {
-                field.reportValidity();
-                field.focus();
-                status.textContent = 'Complete all required fields first.';
-                return false;
-            }
-        }
-        if ($('.record-box').length) {
-            for (const box of $('.record-box')) {
-                for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="hz"]']) {
-                    const field = $(selector, box);
-                    if (!field.value.trim() || !field.checkValidity()) {
-                        field.reportValidity();
-                        field.focus();
-                        status.textContent = 'Complete each record you added, or remove it.';
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
 
-    $('#copy-json').addEventListener('click', async () => {
-        if (!validateForm()) return;
-        try {
-            await navigator.clipboard.writeText(output.textContent);
-            status.textContent = 'Copied!';
-        } catch {
-            const range = document.createRange();
-            range.selectNodeContents(output);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            status.textContent = 'Select and copy the highlighted JSON.';
-        }
-        window.setTimeout(() => status.textContent = '', 2800);
+    // Keep the preview in sync with every field, and wire up the record button.
+    $('input, textarea, select').forEach(input => {
+        input.addEventListener('input', updatePreview);
+        input.addEventListener('change', updatePreview);
     });
-    $('#download-json').addEventListener('click', () => {
-        if (!validateForm()) return;
-        const name = ($('#value-name').value.trim() || 'level').replace(/[^a-z0-9_-]+/gi, '_');
-        const blob = new Blob([output.textContent + '\n'], { type: 'application/json;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = name + '.json';
-        link.click();
-        URL.revokeObjectURL(url);
-    });
-    $('#reset-form').addEventListener('click', () => {
-        $$('[data-include]').forEach(input => input.checked = true);
-        $('#value-id').value = '';
-        $('#value-name').value = '';
-        $('#value-author').value = '';
-        $('#value-creators').value = '';
-        $('#value-verifier').value = '';
-        $('#value-verification').value = '';
-        $('#value-percent').value = '100';
-        $('#value-password').value = '';
-        recordsContainer.replaceChildren();
-        recordCounter = 0;
-        status.textContent = '';
-        updatePreview();
-    });
-    $('#theme-toggle').addEventListener('click', () => {
-        document.body.classList.toggle('dark');
-        localStorage.setItem('json-generator-dark', document.body.classList.contains('dark') ? 'true' : 'false');
-    });
-    if (localStorage.getItem('json-generator-dark') === 'true') document.body.classList.add('dark');
+    $('#add-record').addEventListener('click', addRecord);
+
     updatePreview();
 })();
+
 </script>
 </body>
 </html>
