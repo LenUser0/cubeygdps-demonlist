@@ -395,7 +395,7 @@
     if (localStorage.getItem('json-generator-dark') === 'true') document.body.classList.add('dark');
 
     // Keep the preview in sync with every field, and wire up the record button.
-    $('input, textarea, select').forEach(input => {
+    $$('input, textarea, select').forEach(input => {
         input.addEventListener('input', updatePreview);
         input.addEventListener('change', updatePreview);
     });
