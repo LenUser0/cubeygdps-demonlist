@@ -171,8 +171,9 @@
                             <input id="value-percent" type="number" min="0" max="100" step="1" value="100" required>
                         </div>
                         <div class="field" data-field="password">
-                            <div class="field-top"><label for="value-password">Password / copy info *</label><code>password</code></div>
-                            <input id="value-password" type="text" placeholder="Not Copyable" required>
+                            <div class="field-top"><label for="value-password">Password / copy info</label><code>password</code></div>
+                            <input id="value-password" type="text" placeholder="Optional — leave blank for 2.2 levels">
+                            <p class="hint">Optional. Leave blank if the level has no copy password; the JSON will omit this field.</p>
                         </div>
                         <div class="field full" data-field="records">
                             <div class="field-top">
@@ -183,7 +184,7 @@
                             <button class="small-button" id="add-record" type="button" style="margin-top:12px">＋ Add record</button>
                         </div>
                     </div>
-                    <div class="notice"><strong>* Required:</strong> Every level field above must be filled in. Records are the only optional section; if there are no records, leave it empty.</div>
+                    <div class="notice"><strong>* Required:</strong> Fill in every field marked with an asterisk. Showcase video, password / copy info, and player records are optional.</div>
                 </div>
             </section>
             <section class="panel preview-panel">
@@ -269,16 +270,17 @@
             verifier: text('#value-verifier'),
             verification: text('#value-verification'),
             percentToQualify: text('#value-percent') === '' ? null : Number(text('#value-percent')),
-            password: text('#value-password'),
             records: readRecords()
         };
+        const password = text('#value-password');
+        if (password) data.password = password;
         const showcase = text('#value-showcase');
         if (showcase) data.showcase = showcase;
         return data;
     }
 
     function isFormComplete() {
-        const required = ['#value-id', '#value-name', '#value-author', '#value-creators', '#value-verifier', '#value-verification', '#value-percent', '#value-password'];
+        const required = ['#value-id', '#value-name', '#value-author', '#value-creators', '#value-verifier', '#value-verification', '#value-percent'];
         if (!required.every(selector => {
             const field = $(selector);
             return field.value.trim() !== '' && field.checkValidity();
@@ -306,7 +308,6 @@
             ['#value-verifier', 'Verifier'],
             ['#value-verification', 'Verification video'],
             ['#value-percent', 'Percent to qualify'],
-            ['#value-password', 'Password / copy info']
         ];
         const missing = labels
             .filter(([selector]) => {
@@ -355,7 +356,7 @@
     }
 
     function validateForm() {
-        const required = ['#value-id', '#value-name', '#value-author', '#value-creators', '#value-verifier', '#value-verification', '#value-percent', '#value-password'];
+        const required = ['#value-id', '#value-name', '#value-author', '#value-creators', '#value-verifier', '#value-verification', '#value-percent'];
         for (const selector of required) {
             const field = $(selector);
             if (!field.value.trim() || !field.checkValidity()) {
