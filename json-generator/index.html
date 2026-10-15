@@ -81,6 +81,7 @@
         .small-button:hover { border-color: var(--orange-dark); }
         .primary-button { background: var(--orange); border: 1px solid var(--orange); color: white; padding: 11px 14px; border-radius: 9px; font-size: .86rem; font-weight: 700; cursor: pointer; }
         .primary-button:hover { filter: brightness(.96); }
+        button:disabled { opacity: .45; cursor: not-allowed; filter: grayscale(.25); }
         .record-box { margin-top: 16px; border: 1px dashed var(--border); padding: 14px; border-radius: 11px; }
         .record-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
         .record-head strong { font-size: .88rem; }
@@ -91,7 +92,10 @@
         .preview-panel { position: sticky; top: 18px; }
         .preview-panel .panel-body { padding: 0; }
         .preview-note { padding: 14px 20px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: .8rem; line-height: 1.5; }
-        pre { margin: 0; padding: 20px; min-height: 340px; max-height: 60vh; overflow: auto; background: var(--code); color: var(--code-text); font: 13px/1.65 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre; tab-size: 4; }
+        pre { margin: 0; padding: 22px; min-height: 300px; max-height: 60vh; overflow: auto; background: radial-gradient(ellipse at top left, #252630 0%, var(--code) 58%); color: var(--code-text); font: 13px/1.75 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre; tab-size: 4; border-left: 3px solid var(--orange); }
+        pre:not(.ready) { display: flex; align-items: center; justify-content: center; text-align: center; white-space: pre-wrap; color: #b8bac8; font: 14px/1.7 "Lexend Deca", sans-serif; padding: 32px; }
+        .code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; background: #111116; color: #c7c8d4; border-bottom: 1px solid #33333e; font: 11px/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .04em; text-transform: uppercase; }
+        .code-dot { display: inline-block; width: 8px; height: 8px; margin-right: 7px; border-radius: 50%; background: #ff8c00; box-shadow: 0 0 9px #ff8c0066; }
         .preview-actions { padding: 14px 20px; display: flex; flex-wrap: wrap; gap: 9px; border-top: 1px solid var(--border); }
         .status { align-self: center; color: var(--muted); font-size: .78rem; min-height: 1em; }
         .notice { background: var(--soft-orange); border-radius: 10px; padding: 12px 14px; font-size: .8rem; line-height: 1.55; margin-top: 16px; }
@@ -160,7 +164,7 @@
                         <div class="field" data-field="showcase">
                             <div class="field-top"><label for="value-showcase">Showcase video</label><code>showcase</code></div>
                             <input id="value-showcase" type="url" placeholder="Optional: https://www.youtube.com/watch?v=...">
-                            <p class="hint">Optional. If omitted, the site uses the verification video.</p>
+                            <p class="hint">Optional alternate video. The verification video proves the level was beaten; a showcase is a separate presentation video. Leave this blank to use the verification video instead.</p>
                         </div>
                         <div class="field" data-field="percentToQualify">
                             <div class="field-top"><label for="value-percent">Percent to qualify *</label><code>percentToQualify</code></div>
@@ -183,9 +187,9 @@
                 </div>
             </section>
             <section class="panel preview-panel">
-                <div class="panel-head"><h2>2. JSON preview</h2><span class="status" id="field-count">9 fields</span></div>
-                <div class="preview-note">This is the exact JSON output. Copy it into a new <code>.json</code> level file, then add that filename to the correct list index file.</div>
-                <div class="panel-body"><pre id="json-output" aria-label="Generated JSON" tabindex="0">{}</pre></div>
+                <div class="panel-head"><h2>2. JSON preview</h2><span class="status" id="field-count">Waiting for fields</span></div>
+                <div class="preview-note">The generated JSON appears here once all required fields are valid. Copy it into a new <code>.json</code> level file, then add that filename to the correct list index file.</div>
+                <div class="panel-body"><div class="code-toolbar"><span><i class="code-dot"></i>level.json</span><span id="code-state">Awaiting input</span></div><pre id="json-output" aria-label="Generated JSON" tabindex="0">Fill in all required fields to generate the JSON preview.</pre></div>
                 <div class="preview-actions">
                     <button class="primary-button" id="copy-json" type="button">Copy JSON</button>
                     <button class="small-button" id="download-json" type="button">Download .json</button>
@@ -275,10 +279,40 @@
         return data;
     }
 
+    function isFormComplete() {
+        const required = ['#value-id', '#value-name', '#value-author', '#value-creators', '#value-verifier', '#value-verification', '#value-percent', '#value-password'];
+        if (!required.every(selector => {
+            const field = $(selector);
+            return field.value.trim() !== '' && field.checkValidity();
+        })) return false;
+
+        const showcase = $('#value-showcase');
+        if (showcase.value.trim() && !showcase.checkValidity()) return false;
+
+        // Records are optional, but every record added must be complete.
+        for (const box of $('.record-box', recordsContainer)) {
+            for (const selector of ['[data-record="user"]', '[data-record="link"]', '[data-record="percent"]', '[data-record="fps-value"]']) {
+                const field = $(selector, box);
+                if (!field.value.trim() || !field.checkValidity()) return false;
+            }
+        }
+        return true;
+    }
+
     function updatePreview() {
-        const data = getData();
-        output.textContent = JSON.stringify(data, null, 4);
-        $('#field-count').textContent = Object.keys(data).length + ' fields';
+        const complete = isFormComplete();
+        output.classList.toggle('ready', complete);
+        $('#copy-json').disabled = !complete;
+        $('#download-json').disabled = !complete;
+        $('#field-count').textContent = complete ? Object.keys(getData()).length + ' fields' : 'Waiting for fields';
+        $('#code-state').textContent = complete ? 'Valid JSON preview' : 'Awaiting input';
+
+        if (!complete) {
+            output.textContent = 'Fill in all required fields to generate the JSON preview.\n\nPlayer records are optional, but any record you add must be complete.';
+            status.textContent = '';
+            return;
+        }
+        output.textContent = JSON.stringify(getData(), null, 4);
     }
 
     function validateForm() {
