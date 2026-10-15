@@ -224,7 +224,6 @@
                 <div><label for="record-link-${id}">Proof link</label><input id="record-link-${id}" data-record="link" type="url" placeholder="https://..."></div>
                 <div><label for="record-percent-${id}">Percent</label><input id="record-percent-${id}" data-record="percent" type="number" min="0" max="100" step="1" value="100"></div>
                 <div><label for="record-fps-${id}">FPS value</label><input id="record-fps-${id}" data-record="fps-value" type="number" min="1" step="1" value="360"></div>
-                <div><label for="record-fps-key-${id}">JSON field name</label><select id="record-fps-key-${id}" data-record="fps-key"><option value="fps" selected>fps (current format)</option><option value="hz">hz (legacy format)</option></select></div>
             </div>
             <div class="record-options">
                 <label class="check-label"><input data-record="mobile" type="checkbox"> Mobile</label>
@@ -249,11 +248,10 @@
             const link = $('[data-record="link"]', box).value.trim();
             const percent = $('[data-record="percent"]', box).value;
             const fps = $('[data-record="fps-value"]', box).value;
-            const fpsKey = $('[data-record="fps-key"]', box).value;
             if (user) record.user = user;
             if (link) record.link = link;
             if (percent !== '') record.percent = Number(percent);
-            if (fps !== '') record[fpsKey] = Number(fps);
+            if (fps !== '') record.fps = Number(fps);
             if ($('[data-record="mobile"]', box).checked) record.mobile = true;
             if ($('[data-record="cbf"]', box).checked) record.cbf = true;
             return record;
@@ -264,10 +262,10 @@
         const text = id => $(id).value.trim();
         const idValue = text('#value-id');
         const data = {
-            id: /^-?\\d+$/.test(idValue) ? Number(idValue) : idValue,
+            id: /^-?\d+$/.test(idValue) ? Number(idValue) : idValue,
             name: text('#value-name'),
             author: text('#value-author'),
-            creators: text('#value-creators').split(/[\\n,]+/).map(value => value.trim()).filter(Boolean),
+            creators: text('#value-creators').split(/[\n,]+/).map(value => value.trim()).filter(Boolean),
             verifier: text('#value-verifier'),
             verification: text('#value-verification'),
             percentToQualify: text('#value-percent') === '' ? null : Number(text('#value-percent')),
@@ -299,16 +297,57 @@
         return true;
     }
 
+    function getMissingFields() {
+        const labels = [
+            ['#value-id', 'Level ID'],
+            ['#value-name', 'Level name'],
+            ['#value-author', 'Uploader / author'],
+            ['#value-creators', 'Creators'],
+            ['#value-verifier', 'Verifier'],
+            ['#value-verification', 'Verification video'],
+            ['#value-percent', 'Percent to qualify'],
+            ['#value-password', 'Password / copy info']
+        ];
+        const missing = labels
+            .filter(([selector]) => {
+                const field = $(selector);
+                return !field.value.trim() || !field.checkValidity();
+            })
+            .map(([, label]) => label);
+
+        const showcase = $('#value-showcase');
+        if (showcase.value.trim() && !showcase.checkValidity()) missing.push('Showcase video URL');
+
+        $('.record-box', recordsContainer).forEach((box, index) => {
+            const selectors = [
+                ['[data-record="user"]', 'player name'],
+                ['[data-record="link"]', 'proof link'],
+                ['[data-record="percent"]', 'percent'],
+                ['[data-record="fps-value"]', 'FPS value']
+            ];
+            selectors.forEach(([selector, label]) => {
+                const field = $(selector, box);
+                if (!field.value.trim() || !field.checkValidity()) {
+                    missing.push('Record ' + (index + 1) + ': ' + label);
+                }
+            });
+        });
+        return missing;
+    }
+
     function updatePreview() {
         const complete = isFormComplete();
         output.classList.toggle('ready', complete);
         $('#copy-json').disabled = !complete;
         $('#download-json').disabled = !complete;
-        $('#field-count').textContent = complete ? Object.keys(getData()).length + ' fields' : 'Waiting for fields';
+        const missing = getMissingFields();
+        $('#field-count').textContent = complete ? Object.keys(getData()).length + ' fields' : missing.length + ' field(s) to fix';
         $('#code-state').textContent = complete ? 'Valid JSON preview' : 'Awaiting input';
 
         if (!complete) {
-            output.textContent = 'Fill in all required fields to generate the JSON preview.\n\nPlayer records are optional, but any record you add must be complete.';
+            output.textContent = 'Complete the required fields to generate the JSON preview.\n\n' +
+                (missing.length ? 'Check: ' + missing.join(', ') + '.' : 'Check the values marked as invalid.') +
+                '\n\nPlayer records are optional, but any record you add must be complete.';
             status.textContent = '';
             return;
         }
