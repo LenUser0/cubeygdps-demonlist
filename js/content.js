@@ -50,9 +50,12 @@ export async function fetchList(listId = 'demon') {
                     }
 
                     const records = Array.isArray(level.records)
-                        ? [...level.records].sort(
-                              (a, b) => b.percent - a.percent,
-                          )
+                        ? [...level.records].sort((a, b) => {
+                              // Put verified completions (100%) first, then sort by highest progress.
+                              const percentDifference = (b.percent ?? 0) - (a.percent ?? 0);
+                              if (percentDifference !== 0) return percentDifference;
+                              return 0;
+                          })
                         : [];
 
                     return [
@@ -103,6 +106,7 @@ export async function fetchLeaderboard(listId = 'demon') {
         return [[], [getListSource(listId).listFile]];
     }
 
+    const isImpossible = listId === "impossible";
     const scoreMap = {};
     const errs = [];
     list.forEach(([level, err], rank) => {
@@ -111,22 +115,24 @@ export async function fetchLeaderboard(listId = 'demon') {
             return;
         }
 
-        // Verification
-        const verifier = Object.keys(scoreMap).find(
-            (u) => u.toLowerCase() === level.verifier.toLowerCase(),
-        ) || level.verifier;
-        scoreMap[verifier] ??= {
-            verified: [],
-            completed: [],
-            progressed: [],
-        };
-        const { verified } = scoreMap[verifier];
-        verified.push({
-            rank: rank + 1,
-            level: level.name,
-            score: score(rank + 1, 100, level.percentToQualify),
-            link: level.verification,
-        });
+        // ILL levels are intentionally unverified; do not award verifier points.
+        if (!isImpossible && level.verifier) {
+            const verifier = Object.keys(scoreMap).find(
+                (u) => u.toLowerCase() === level.verifier.toLowerCase(),
+            ) || level.verifier;
+            scoreMap[verifier] ??= {
+                verified: [],
+                completed: [],
+                progressed: [],
+            };
+            const { verified } = scoreMap[verifier];
+            verified.push({
+                rank: rank + 1,
+                level: level.name,
+                score: score(rank + 1, 100, level.percentToQualify),
+                link: level.verification,
+            });
+        }
 
         // Records
         level.records.forEach((record) => {
