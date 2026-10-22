@@ -6,6 +6,12 @@ export function getYoutubeIdFromUrl(url) {
 }
 
 export function embed(video) {
+    const medalClipId = video.match(/medal\.tv\/(?:games\/[^/]+\/clips|clip)\/([\w-]+)/i)?.[1];
+
+    if (medalClipId) {
+        return `https://medal.tv/clip/${medalClipId}/embed`;
+    }
+
     return `https://www.youtube.com/embed/${getYoutubeIdFromUrl(video)}`;
 }
 
@@ -17,17 +23,16 @@ export function getThumbnailFromId(id) {
     return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
 
-// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+// https://stackoverflow.com/questions/2450954/how-do-i-randomize-shuffle-a-javascript-array
 export function shuffle(array) {
     let currentIndex = array.length, randomIndex;
 
     // While there remain elements to shuffle.
     while (currentIndex != 0) {
-        // Pick a remaining element.
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
 
-        // And swap it with the current element.
+        // And swap it with the last element.
         [array[currentIndex], array[randomIndex]] = [
             array[randomIndex],
             array[currentIndex],
