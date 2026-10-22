@@ -39,8 +39,17 @@ export default {
             <div class="level-container">
                 <div class="level" v-if="level">
                     <h1>{{ level.name }}</h1>
-                    <LevelAuthors :author="level.author" :creators="level.creators" :verifier="level.verifier"></LevelAuthors>
+                    <LevelAuthors v-if="!isImpossible" :author="level.author" :creators="level.creators" :verifier="level.verifier"></LevelAuthors>
+                    <div v-else class="level-authors">
+                        <div class="type-title-sm">Status</div>
+                        <p class="type-body">Unverified</p>
+                        <div class="type-title-sm">Creators</div>
+                        <p class="type-body">{{ (level.creators || []).join(', ') || level.author }}</p>
+                        <div class="type-title-sm">Publisher</div>
+                        <p class="type-body">{{ level.author }}</p>
+                    </div>
                     <iframe v-if="video" class="video" id="videoframe" :src="video" frameborder="0"></iframe>
+                    <p v-else-if="isImpossible">Unverified — no verification video required.</p>
                     <p v-else>Placeholder level — awaiting entries.</p>
                     <ul class="stats">
                         <li>
@@ -57,7 +66,8 @@ export default {
                         </li>
                     </ul>
                     <h2>Records</h2>
-                    <p v-if="selected + 1 <= 75"><strong>{{ level.percentToQualify }}%</strong> or better to qualify</p>
+                    <p v-if="isImpossible"><strong>0%</strong> or better to qualify — any progress can be submitted</p>
+                    <p v-else-if="selected + 1 <= 75"><strong>{{ level.percentToQualify }}%</strong> or better to qualify</p>
                     <p v-else-if="selected +1 <= 150"><strong>100%</strong> or better to qualify</p>
                     <p v-else>This level does not accept new records.</p>
                     <table class="records">
@@ -135,6 +145,9 @@ export default {
         store
     }),
     computed: {
+        isImpossible() {
+            return this.$route.query.list === "impossible";
+        },
         level() {
             return this.list?.[this.selected]?.[0] || null;
         },
