@@ -21,8 +21,8 @@
     border-top-right-radius: 0.5rem;
 }
 
-.tabs .tab.selected{
-    border-bottom: 3px solid var(--color-on-background);
+.tabs .tab.selected {
+    border-bottom-color: var(--color-on-background);
 }
 
 .tabs .tab:hover{
