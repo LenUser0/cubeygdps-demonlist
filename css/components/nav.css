@@ -115,3 +115,107 @@
         padding-inline: 0.4rem;
     }
 }
+
+
+.nav .list-menu {
+    position: relative;
+    align-self: center;
+    flex-shrink: 0;
+}
+
+.nav .list-menu .list-switcher {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    width: 12rem;
+    max-width: 12rem;
+    min-width: 9rem;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 0.65rem;
+    background: linear-gradient(135deg, rgba(255, 153, 51, 0.3), rgba(120, 55, 0, 0.2));
+    color: var(--color-on-primary);
+    font: 700 0.9rem "Lexend Deca", sans-serif;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(45, 20, 0, 0.18);
+    transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.nav .list-menu .list-switcher:hover {
+    border-color: white;
+    background-color: rgba(255, 153, 51, 0.35);
+    transform: translateY(-1px);
+}
+
+.nav .list-switcher__chevron {
+    width: 0.5rem;
+    height: 0.5rem;
+    flex: 0 0 0.5rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translateY(-2px);
+}
+
+.nav .list-menu__options {
+    position: absolute;
+    top: calc(100% + 0.45rem);
+    left: 0;
+    z-index: 1000;
+    width: max-content;
+    min-width: 100%;
+    max-width: 17rem;
+    padding: 0.35rem;
+    border: 1px solid rgba(255, 153, 51, 0.55);
+    border-radius: 0.75rem;
+    background: var(--color-background, #242424);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.nav .list-menu__option {
+    display: block;
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 0;
+    border-radius: 0.45rem;
+    background: transparent;
+    color: var(--color-on-background, #fff);
+    font: 500 0.85rem "Lexend Deca", sans-serif;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.nav .list-menu__option:hover,
+.nav .list-menu__option:focus-visible {
+    outline: none;
+    background: rgba(255, 153, 51, 0.18);
+}
+
+.nav .list-menu__option.is-active {
+    background: rgba(255, 153, 51, 0.25);
+    font-weight: 700;
+}
+
+.nav .list-switcher:focus-visible,
+.nav .list-menu__option:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+@media screen and (max-width: 1100px) {
+    .nav .list-menu .list-switcher {
+        max-width: 9.5rem;
+        min-width: 7.5rem;
+        padding-inline: 0.5rem;
+    }
+
+    .nav .list-menu__options {
+        max-width: min(17rem, 70vw);
+    }
+
+    .nav .list-menu__option {
+        white-space: normal;
+    }
+}
