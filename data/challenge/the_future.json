@@ -5,8 +5,17 @@
     "creators": [
         "giggleshart"
     ],
-    "verifier": "LenUser",
+    "verifier": "giggleshart",
     "verification": "https://medal.tv/games/geometry-dash/clips/nMfiloZiOrgpliPyZ",
     "percentToQualify": 60,
-    "records": []
+    "records": [
+        {
+            "user": "LenUser",
+            "link": "https://medal.tv/games/geometry-dash/clips/nMfiloZiOrgpliPyZ",
+            "percent": 100,
+            "fps": 60,
+            "mobile": false,
+            "cbf": true
+        }
+    ]
 }
