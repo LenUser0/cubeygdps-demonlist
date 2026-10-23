@@ -172,8 +172,10 @@ export default {
     },
     async mounted() {
         try {
-            this.list = await fetchList(this.$route.query.list);
-            this.editors = await fetchEditors();
+            [this.list, this.editors] = await Promise.all([
+                fetchList(this.$route.query.list),
+                fetchEditors(),
+            ]);
 
             // Error handling
             if (!this.list) {
