@@ -10,9 +10,6 @@
     padding-right: 2rem;
 }
 
-.page-list .list {
-    table-layout: auto;
-}
 .page-list .list .rank {
     text-align: end;
     padding-right: 1rem;
