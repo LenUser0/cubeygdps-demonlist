@@ -9,10 +9,17 @@ export const store = Vue.reactive({
 });
 
 const app = Vue.createApp({
-    data: () => ({ store }),
+    data: () => ({
+        store,
+        listMenuOpen: false,
+        listNames: {
+            demon: 'Demon List',
+            challenge: 'Challenge List',
+            impossible: 'Impossible Levels List',
+        },
+    }),
     methods: {
-        changeList(event) {
-            const list = event.target.value;
+        selectList(list) {
             const current = router.currentRoute.value;
             const query = { ...current.query };
 
@@ -22,6 +29,7 @@ const app = Vue.createApp({
                 query.list = list;
             }
 
+            this.listMenuOpen = false;
             router.push({ path: current.path, query });
         },
     },
