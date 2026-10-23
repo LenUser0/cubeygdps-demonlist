@@ -16,7 +16,7 @@ export function embed(video) {
 }
 
 export function localize(num) {
-    return num.toLocaleString(undefined, { minimumFractionDigits: 3 });
+    return num.toLocaleString();
 }
 
 export function getThumbnailFromId(id) {
