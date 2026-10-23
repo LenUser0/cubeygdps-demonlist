@@ -153,17 +153,32 @@
             </div>
             <nav class="nav">
                 <label class="list-switcher-label" for="list-switcher">List</label>
-                <select
-                    class="list-switcher"
-                    id="list-switcher"
-                    aria-label="Choose a list"
-                    :value="$route.query.list || 'demon'"
-                    @change="changeList"
-                >
-                    <option value="demon">Demon List</option>
-                    <option value="challenge">Challenge List</option>
-                    <option value="impossible">Impossible Levels List</option>
-                </select>
+                <div class="list-menu">
+                    <button
+                        class="list-switcher"
+                        id="list-switcher"
+                        type="button"
+                        aria-label="Choose a list"
+                        aria-haspopup="true"
+                        :aria-expanded="listMenuOpen"
+                        @click="listMenuOpen = !listMenuOpen"
+                        @keydown.esc="listMenuOpen = false"
+                    >
+                        <span>{{ listNames[$route.query.list || 'demon'] || 'Demon List' }}</span>
+                        <span class="list-switcher__chevron" aria-hidden="true"></span>
+                    </button>
+                    <div v-if="listMenuOpen" class="list-menu__options" role="menu">
+                        <button
+                            v-for="(label, value) in listNames"
+                            :key="value"
+                            type="button"
+                            role="menuitem"
+                            class="list-menu__option"
+                            :class="{ 'is-active': ($route.query.list || 'demon') === value }"
+                            @click="selectList(value)"
+                        >{{ label }}</button>
+                    </div>
+                </div>
                 <router-link class="nav__tab" to="/">
                     <span class="type-label-lg">List</span>
                 </router-link>
