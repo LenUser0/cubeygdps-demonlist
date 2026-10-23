@@ -64,59 +64,6 @@
     text-transform: uppercase;
 }
 
-.nav .list-switcher {
-    align-self: center;
-    width: 12rem;
-    max-width: 12rem;
-    min-width: 9rem;
-    padding: 0.65rem 2rem 0.65rem 0.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    border-radius: 0.65rem;
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: rgba(120, 55, 0, 0.18);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.7rem center;
-    color: var(--color-on-primary);
-    font-family: "Lexend Deca", sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(75, 35, 0, 0.12);
-    transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
-}
-
-.nav .list-switcher:hover {
-    background-color: rgba(120, 55, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.85);
-}
-
-.nav .list-switcher:focus-visible {
-    outline: 2px solid white;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
-}
-
-.nav .list-switcher option {
-    background-color: var(--color-background);
-    color: var(--color-on-background);
-    font-family: "Lexend Deca", sans-serif;
-}
-
-@media screen and (max-width: 1100px) {
-    .nav {
-        column-gap: 0.75rem;
-    }
-
-    .nav .list-switcher {
-        max-width: 9.5rem;
-        min-width: 7.5rem;
-        padding-inline: 0.4rem;
-    }
-}
-
-
 .nav .list-menu {
     position: relative;
     align-self: center;
