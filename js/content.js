@@ -171,9 +171,10 @@ export async function fetchLeaderboard(listId = 'demon') {
     // Wrap in extra Object containing the user and total score
     const res = Object.entries(scoreMap).map(([user, scores]) => {
         const { verified, completed, progressed } = scores;
-        const total = [verified, completed, progressed]
-            .flat()
-            .reduce((prev, cur) => prev + cur.score, 0);
+        let total = 0;
+        for (const item of verified) total += item.score;
+        for (const item of completed) total += item.score;
+        for (const item of progressed) total += item.score;
 
         return {
             user,
