@@ -32,6 +32,10 @@
             href="css/components/tabs.css"
         />
         <style>
+            [v-cloak] {
+                display: none !important;
+            }
+
             .submission-modal {
                 position: fixed !important;
                 top: 0 !important;
@@ -167,7 +171,7 @@
                         <span v-text="listNames[$route.query.list || 'demon'] || 'Demon List'">Demon List</span>
                         <span class="list-switcher__chevron" aria-hidden="true"></span>
                     </button>
-                    <div v-if="listMenuOpen" class="list-menu__options" role="menu">
+                    <div v-cloak v-if="listMenuOpen" class="list-menu__options" role="menu">
                         <button
                             v-for="(label, value) in listNames"
                             :key="value"
