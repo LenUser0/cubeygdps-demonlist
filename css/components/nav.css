@@ -135,7 +135,6 @@
 
 .nav .list-menu__option:hover,
 .nav .list-menu__option:focus-visible {
-    outline: none;
     background: rgba(255, 153, 51, 0.18);
 }
 
