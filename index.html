@@ -168,7 +168,7 @@
                         @click="listMenuOpen = !listMenuOpen"
                         @keydown.esc="listMenuOpen = false"
                     >
-                        <span v-text="listNames[$route.query.list || 'demon'] || 'Demon List'">Demon List</span>
+                        <span v-text="listNames[$route.query.list || 'demon'] || 'Demon List'"></span>
                         <span class="list-switcher__chevron" aria-hidden="true"></span>
                     </button>
                     <div v-cloak v-if="listMenuOpen" class="list-menu__options" role="menu">
