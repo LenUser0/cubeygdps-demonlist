@@ -17,7 +17,8 @@
 .page-list .list .level {
     width: 100%;
 }
-.page-list .list .level button {
+.page-list .list .level button,
+.page-leaderboard .board .user button {
     background-color: var(--color-background);
     color: var(--color-on-background);
     border: none;
@@ -25,6 +26,9 @@
     padding: 1rem;
     text-align: start;
     overflow-wrap: anywhere;
+}
+
+.page-list .list .level button {
     cursor: pointer;
 }
 .page-list .list .level.error button {
