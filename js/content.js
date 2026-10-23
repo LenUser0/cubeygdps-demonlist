@@ -90,7 +90,8 @@ export async function fetchEditors() {
         }
 
         const editors = await editorsResults.json();
-        return editors;
+        // Keep List Helper in _editors.json for possible future use, but hide it from the page.
+        return editors.filter((editor) => editor.role !== 'helper');
     } catch (error) {
         console.error('Failed to load list editors.', error);
         return null;
@@ -106,6 +107,14 @@ export async function fetchLeaderboard(listId = 'demon') {
 
     const isImpossible = listId === "impossible";
     const scoreMap = {};
+    const userNames = new Map();
+    const getUserKey = (name) => {
+        const normalized = name.toLowerCase();
+        if (!userNames.has(normalized)) {
+            userNames.set(normalized, name);
+        }
+        return userNames.get(normalized);
+    };
     const errs = [];
     list.forEach(([level, err], rank) => {
         if (err) {
@@ -115,9 +124,7 @@ export async function fetchLeaderboard(listId = 'demon') {
 
         // ILL levels are intentionally unverified; do not award verifier points.
         if (!isImpossible && level.verifier) {
-            const verifier = Object.keys(scoreMap).find(
-                (u) => u.toLowerCase() === level.verifier.toLowerCase(),
-            ) || level.verifier;
+            const verifier = getUserKey(level.verifier);
             scoreMap[verifier] ??= {
                 verified: [],
                 completed: [],
@@ -134,9 +141,7 @@ export async function fetchLeaderboard(listId = 'demon') {
 
         // Records
         level.records.forEach((record) => {
-            const user = Object.keys(scoreMap).find(
-                (u) => u.toLowerCase() === record.user.toLowerCase(),
-            ) || record.user;
+            const user = getUserKey(record.user);
             scoreMap[user] ??= {
                 verified: [],
                 completed: [],
