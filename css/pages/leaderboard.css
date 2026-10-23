@@ -45,15 +45,7 @@
 .page-leaderboard .board .user {
     width: 100%;
 }
-.page-leaderboard .board .user button {
-    background-color: var(--color-background);
-    color: var(--color-on-background);
-    border: none;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    text-align: start;
-    overflow-wrap: anywhere;
-}
+
 .page-leaderboard .board .user button:hover {
     background-color: var(--color-background-hover);
     color: var(--color-on-background-hover);
