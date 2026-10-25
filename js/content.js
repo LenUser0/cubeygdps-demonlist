@@ -50,7 +50,7 @@ export async function fetchList(listId = 'demon') {
                     }
 
                     const records = Array.isArray(level.records)
-                        ? [...level.records].sort(
+                        ? level.records.sort(
                               // Put verified completions (100%) first, then sort by highest progress.
                               (a, b) => (b.percent ?? 0) - (a.percent ?? 0),
                           )
