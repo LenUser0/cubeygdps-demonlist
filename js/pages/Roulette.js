@@ -176,7 +176,7 @@ export default {
 
             const fullList = await fetchList(this.$route.query.list);
 
-            if (fullList.filter(([_, err]) => err).length > 0) {
+            if (fullList.some(([, err]) => err)) {
                 this.loading = false;
                 this.showToast(
                     'List is currently broken. Wait until it\'s fixed to start a roulette.',
