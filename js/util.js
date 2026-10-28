@@ -1,12 +1,13 @@
 // https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
+const youtubeIdRegex = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
+const medalClipRegex = /medal\.tv\/(?:games\/[^/]+\/clips|clip)\/([\w-]+)/i;
+
 export function getYoutubeIdFromUrl(url) {
-    return url.match(
-        /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/,
-    )?.[1] ?? '';
+    return url.match(youtubeIdRegex)?.[1] ?? '';
 }
 
 export function embed(video) {
-    const medalClipId = video.match(/medal\.tv\/(?:games\/[^/]+\/clips|clip)\/([\w-]+)/i)?.[1];
+    const medalClipId = video.match(medalClipRegex)?.[1];
 
     if (medalClipId) {
         return `https://medal.tv/clip/${medalClipId}/embed`;
@@ -33,10 +34,9 @@ export function shuffle(array) {
         currentIndex--;
 
         // And swap it with the last element.
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex],
-            array[currentIndex],
-        ];
+        const value = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = value;
     }
 
     return array;
