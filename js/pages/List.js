@@ -199,13 +199,11 @@ export default {
                     "Failed to load list. Retry in a few minutes or notify list staff.",
                 ];
             } else {
-                this.errors.push(
-                    ...this.list
-                        .filter(([_, err]) => err)
-                        .map(([_, err]) => {
-                            return `Failed to load level. (\${err}.json)`;
-                        }),
-                );
+                for (const [, err] of this.list) {
+                    if (err) {
+                        this.errors.push(`Failed to load level. (\${err}.json)`);
+                    }
+                }
 
                 if (!this.editors) {
                     this.errors.push("Failed to load list editors.");
