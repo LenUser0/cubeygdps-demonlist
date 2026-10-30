@@ -32,47 +32,61 @@ export async function fetchList(listId = 'demon') {
             throw new Error('_list.json does not contain an array');
         }
 
-        return await Promise.all(
-            list.map(async (path, rank) => {
-                try {
-                    const levelResult = await fetch(dataUrl(source.directory, `${path}.json`));
+        // Limit concurrent downloads/parsing to reduce peak memory usage.
+        const results = [];
+        const batchSize = 8;
 
-                    if (!levelResult.ok) {
-                        throw new Error(
-                            `HTTP ${levelResult.status} while loading ${path}.json`,
+        for (let start = 0; start < list.length; start += batchSize) {
+            const batch = await Promise.all(
+                list.slice(start, start + batchSize).map(async (path, index) => {
+                    const rank = start + index;
+
+                    try {
+                        const levelResult = await fetch(
+                            dataUrl(source.directory, path + '.json'),
                         );
+
+                        if (!levelResult.ok) {
+                            throw new Error(
+                                'HTTP ' + levelResult.status + ' while loading ' + path + '.json',
+                            );
+                        }
+
+                        const level = await levelResult.json();
+
+                        if (!level || typeof level !== 'object') {
+                            throw new Error('level JSON is not an object');
+                        }
+
+                        const records = Array.isArray(level.records)
+                            ? level.records.sort(
+                                  // Put verified completions (100%) first, then sort by highest progress.
+                                  (a, b) => (b.percent ?? 0) - (a.percent ?? 0),
+                              )
+                            : [];
+
+                        return [
+                            {
+                                ...level,
+                                path,
+                                records,
+                            },
+                            null,
+                        ];
+                    } catch (error) {
+                        console.error(
+                            'Failed to load level #' + (rank + 1) + ' ' + path + '.',
+                            error,
+                        );
+                        return [null, path];
                     }
+                }),
+            );
 
-                    const level = await levelResult.json();
+            results.push(...batch);
+        }
 
-                    if (!level || typeof level !== 'object') {
-                        throw new Error('level JSON is not an object');
-                    }
-
-                    const records = Array.isArray(level.records)
-                        ? level.records.sort(
-                              // Put verified completions (100%) first, then sort by highest progress.
-                              (a, b) => (b.percent ?? 0) - (a.percent ?? 0),
-                          )
-                        : [];
-
-                    return [
-                        {
-                            ...level,
-                            path,
-                            records,
-                        },
-                        null,
-                    ];
-                } catch (error) {
-                    console.error(
-                        `Failed to load level #${rank + 1} ${path}.`,
-                        error,
-                    );
-                    return [null, path];
-                }
-            }),
-        );
+        return results;
     } catch (error) {
         console.error('Failed to load list.', error);
         return null;
