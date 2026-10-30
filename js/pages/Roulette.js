@@ -54,7 +54,7 @@ export default {
                         <!-- Current Level -->
                         <div class="level" v-if="!hasCompleted">
                             <a :href="currentLevel.video" target="_blank" class="video">
-                                <img :src="getThumbnailFromId(getYoutubeIdFromUrl(currentLevel.video))" alt="">
+                                <img :src="getThumbnailFromId(getYoutubeIdFromUrl(currentLevel.video))" alt="" loading="lazy" decoding="async">
                             </a>
                             <div class="meta">
                                 <p>#{{ currentLevel.rank }}</p>
