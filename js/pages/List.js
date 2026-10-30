@@ -229,6 +229,11 @@ export default {
         embed,
         score,
         async selectLevel(index) {
+            const previousLevel = this.list?.[this.selected]?.[0];
+            if (previousLevel) {
+                previousLevel.records = [];
+            }
+
             this.selected = index;
             await this.loadLevelRecords(index);
         },
