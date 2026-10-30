@@ -48,7 +48,7 @@ export default {
                         <div class="type-title-sm">Publisher</div>
                         <p class="type-body">{{ level.author }}</p>
                     </div>
-                    <iframe v-if="video" class="video" id="videoframe" :src="video" frameborder="0"></iframe>
+                    <iframe v-if="video" class="video" id="videoframe" :src="video" loading="lazy" frameborder="0"></iframe>
                     <p v-else-if="isImpossible">Unverified — no verification video required.</p>
                     <p v-else>Placeholder level — awaiting entries.</p>
                     <ul class="stats">
