@@ -26,7 +26,7 @@ export default {
                 </div>
                 <div class="board-container">
                     <table class="board">
-                        <tr v-for="(ientry, i) in leaderboard">
+                        <tr v-for="(ientry, i) in leaderboard" :key="ientry.user">
                             <td class="rank">
                                 <p class="type-label-lg">#{{ i + 1 }}</p>
                             </td>
@@ -47,7 +47,7 @@ export default {
                         <h3>{{ entry.total }}</h3>
                         <h2 v-if="entry.verified.length > 0">Verified ({{ entry.verified.length}})</h2>
                         <table class="table">
-                            <tr v-for="score in entry.verified">
+                            <tr v-for="(score, i) in entry.verified" :key="i">
                                 <td class="rank">
                                     <p>#{{ score.rank }}</p>
                                 </td>
@@ -61,7 +61,7 @@ export default {
                         </table>
                         <h2 v-if="entry.completed.length > 0">Completed ({{ entry.completed.length }})</h2>
                         <table class="table">
-                            <tr v-for="score in entry.completed">
+                            <tr v-for="(score, i) in entry.completed" :key="i">
                                 <td class="rank">
                                     <p>#{{ score.rank }}</p>
                                 </td>
@@ -75,7 +75,7 @@ export default {
                         </table>
                         <h2 v-if="entry.progressed.length > 0">Progressed ({{entry.progressed.length}})</h2>
                         <table class="table">
-                            <tr v-for="score in entry.progressed">
+                            <tr v-for="(score, i) in entry.progressed" :key="i">
                                 <td class="rank">
                                     <p>#{{ score.rank }}</p>
                                 </td>
