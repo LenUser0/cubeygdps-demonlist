@@ -41,7 +41,7 @@ export default {
                 <div class="levels">
                     <template v-if="levels.length > 0">
                         <!-- Completed Levels -->
-                        <div class="level" v-for="(level, i) in levels.slice(0, progression.length)">
+                        <div class="level" v-for="(level, i) in completedLevels">
                             <a :href="level.video" class="video">
                                 <img :src="getThumbnailFromId(getYoutubeIdFromUrl(level.video))" alt="">
                             </a>
@@ -76,7 +76,7 @@ export default {
                         </div>
                         <!-- Remaining Levels -->
                         <template v-if="givenUp && showRemaining">
-                            <div class="level" v-for="(level, i) in levels.slice(progression.length + 1, levels.length - currentPercentage + progression.length)">
+                            <div class="level" v-for="(level, i) in remainingLevels">
                                 <a :href="level.video" target="_blank" class="video">
                                     <img :src="getThumbnailFromId(getYoutubeIdFromUrl(level.video))" alt="">
                                 </a>
@@ -137,6 +137,15 @@ export default {
     computed: {
         currentLevel() {
             return this.levels[this.progression.length];
+        },
+        completedLevels() {
+            return this.levels.slice(0, this.progression.length);
+        },
+        remainingLevels() {
+            return this.levels.slice(
+                this.progression.length + 1,
+                this.levels.length - this.currentPercentage + this.progression.length,
+            );
         },
         currentPercentage() {
             return this.progression[this.progression.length - 1] || 0;
