@@ -1,7 +1,7 @@
 import { store } from "../main.js";
 import { embed } from "../util.js";
 import { score } from "../score.js";
-import { fetchEditors, fetchList } from "../content.js";
+import { fetchEditors, fetchLevelRecords, fetchList } from "../content.js";
 
 import Spinner from "../components/Spinner.js";
 import LevelAuthors from "../components/List/LevelAuthors.js";
@@ -29,7 +29,7 @@ export default {
                             <p v-else class="type-label-lg">Legacy</p>
                         </td>
                         <td class="level" :class="{ 'active': selected == i, 'error': !level }">
-                            <button @click="selected = i">
+                            <button @click="selectLevel(i)">
                                 <span class="type-label-lg">{{ level?.name || \`Error (\${err}.json)\` }}</span>
                             </button>
                         </td>
@@ -153,6 +153,7 @@ export default {
     data: () => ({
         list: [],
         editors: [],
+        recordLoadId: 0,
         loading: true,
         selected: 0,
         errors: [],
@@ -189,9 +190,14 @@ export default {
     async mounted() {
         try {
             [this.list, this.editors] = await Promise.all([
-                fetchList(this.$route.query.list),
+                fetchList(this.$route.query.list, { includeRecords: false }),
                 fetchEditors(),
             ]);
+
+            // Load records only for the initially selected level.
+            if (this.list?.[this.selected]?.[0]) {
+                await this.loadLevelRecords(this.selected);
+            }
 
             // Error handling
             if (!this.list) {
@@ -222,5 +228,32 @@ export default {
     methods: {
         embed,
         score,
+        async selectLevel(index) {
+            this.selected = index;
+            await this.loadLevelRecords(index);
+        },
+        async loadLevelRecords(index) {
+            const entry = this.list?.[index];
+            if (!entry?.[0]) return;
+
+            const requestId = ++this.recordLoadId;
+            entry[0].records = [];
+
+            try {
+                const records = await fetchLevelRecords(
+                    entry[0].path,
+                    this.$route.query.list,
+                );
+
+                if (requestId === this.recordLoadId) {
+                    entry[0].records = records;
+                }
+            } catch (error) {
+                console.error('Failed to load level records.', error);
+                if (requestId === this.recordLoadId) {
+                    this.errors.push(`Failed to load records. (${entry[0].path}.json)`);
+                }
+            }
+        },
     },
 };
