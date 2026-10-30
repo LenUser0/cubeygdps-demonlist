@@ -201,7 +201,7 @@ export default {
             } else {
                 for (const [, err] of this.list) {
                     if (err) {
-                        this.errors.push(`Failed to load level. (\${err}.json)`);
+                        this.errors.push(`Failed to load level. (${err}.json)`);
                     }
                 }
 
