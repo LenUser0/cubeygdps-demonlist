@@ -43,7 +43,7 @@ export default {
                         <!-- Completed Levels -->
                         <div class="level" v-for="(level, i) in completedLevels" :key="level.rank">
                             <a :href="level.video" class="video">
-                                <img :src="getThumbnailFromId(getYoutubeIdFromUrl(level.video))" alt="">
+                                <img :src="getThumbnailFromId(getYoutubeIdFromUrl(level.video))" alt="" loading="lazy" decoding="async">
                             </a>
                             <div class="meta">
                                 <p>#{{ level.rank }}</p>
@@ -78,7 +78,7 @@ export default {
                         <template v-if="givenUp && showRemaining">
                             <div class="level" v-for="(level, i) in remainingLevels" :key="level.rank">
                                 <a :href="level.video" target="_blank" class="video">
-                                    <img :src="getThumbnailFromId(getYoutubeIdFromUrl(level.video))" alt="">
+                                    <img :src="getThumbnailFromId(getYoutubeIdFromUrl(level.video))" alt="" loading="lazy" decoding="async">
                                 </a>
                                 <div class="meta">
                                     <p>#{{ level.rank }}</p>
@@ -193,16 +193,20 @@ export default {
                 return;
             }
 
-            const fullListMapped = fullList.map(([lvl, _], i) => ({
-                rank: i + 1,
-                id: lvl.id,
-                name: lvl.name,
-                video: lvl.verification,
-            }));
             const list = [];
-            if (this.useMainList) list.push(...fullListMapped.slice(0, 75));
-            if (this.useExtendedList) {
-                list.push(...fullListMapped.slice(75, 150));
+            for (let i = 0; i < fullList.length && i < 150; i++) {
+                if (
+                    (i < 75 && this.useMainList) ||
+                    (i >= 75 && this.useExtendedList)
+                ) {
+                    const [level] = fullList[i];
+                    list.push({
+                        rank: i + 1,
+                        id: level.id,
+                        name: level.name,
+                        video: level.verification,
+                    });
+                }
             }
 
             // random 100 levels
