@@ -16,7 +16,7 @@ const getListSource = (listId = 'demon') =>
 const dataUrl = (directory, file) =>
     new URL(`${directory}${file}`, import.meta.url).href;
 
-export async function fetchList(listId = 'demon') {
+export async function fetchList(listId = 'demon', { includeRecords = true } = {}) {
     const source = getListSource(listId);
 
     try {
@@ -58,7 +58,7 @@ export async function fetchList(listId = 'demon') {
                             throw new Error('level JSON is not an object');
                         }
 
-                        const records = Array.isArray(level.records)
+                        const records = includeRecords && Array.isArray(level.records)
                             ? level.records.sort(
                                   // Put verified completions (100%) first, then sort by highest progress.
                                   (a, b) => (b.percent ?? 0) - (a.percent ?? 0),
@@ -91,6 +91,24 @@ export async function fetchList(listId = 'demon') {
         console.error('Failed to load list.', error);
         return null;
     }
+}
+
+
+export async function fetchLevelRecords(path, listId = 'demon') {
+    const source = getListSource(listId);
+    const result = await fetch(dataUrl(source.directory, path + '.json'));
+
+    if (!result.ok) {
+        throw new Error('HTTP ' + result.status + ' while loading ' + path + '.json');
+    }
+
+    const level = await result.json();
+
+    return Array.isArray(level?.records)
+        ? level.records.sort(
+              (a, b) => (b.percent ?? 0) - (a.percent ?? 0),
+          )
+        : [];
 }
 
 export async function fetchEditors() {
