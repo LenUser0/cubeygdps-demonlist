@@ -1,0 +1,21 @@
+{
+    "id": 157,
+    "name": "exasperwavetion",
+    "author": "Nautilus",
+    "creators": [
+        "Nautilus"
+    ],
+    "verifier": "Nautilus",
+    "verification": "https://medal.tv/games/geometry-dash/clips/nPv3ztJX7fZH6GskL",
+    "percentToQualify": 75,
+    "records": [
+        {
+            "user": "LenUser",
+            "link": "https://medal.tv/games/geometry-dash/clips/nPv3ztJX7fZH6GskL",
+            "percent": 100,
+            "fps": 60,
+            "mobile": false,
+            "cbf": true
+        }
+    ]
+}
