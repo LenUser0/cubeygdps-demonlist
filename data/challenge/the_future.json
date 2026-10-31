@@ -22,7 +22,7 @@
             "link": "https://youtu.be/9zGUscX704E?is=j1PQoGuNIeBa9B4k",
             "percent": 100,
             "fps": 90,
-            "mobile": false,
+            "mobile": true,
             "cbf": true
         }
     ]
