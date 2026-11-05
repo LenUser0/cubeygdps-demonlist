@@ -23,6 +23,13 @@
             "percent": 100,
             "fps": 60,
             "cbf": true
+        },
+        {
+            "user": "Vetiwi",
+            "link": "https://medal.tv/games/requested/clips/nS1adrkEkU4VpYkoW",
+            "percent": 100,
+            "fps": 120,
+            "mobile": false
         }
     ]
 }
