@@ -70,7 +70,7 @@ export default {
                         </li>
                     </ul>
                     <h2>Records</h2>
-                    <p v-if="isImpossible"><strong>0%</strong> or better to qualify — any progress can be submitted</p>
+                    <p v-if="isImpossible"><strong>{{ minimumRecordPercent }}%</strong> or better to qualify — new records must match or beat the current highest progress</p>
                     <p v-else-if="selected + 1 <= 75"><strong>{{ level.percentToQualify }}%</strong> or better to qualify</p>
                     <p v-else-if="selected +1 <= 150"><strong>100%</strong> or better to qualify</p>
                     <p v-else>This level does not accept new records.</p>
@@ -115,7 +115,13 @@ export default {
                     <h3>Submission Requirements</h3>
                     <template v-if="isImpossible">
                         <p>
-                            Play the listed level without hacks or gameplay-altering modifications. Any legitimate progress from 0% may be submitted.
+                            Play the listed level without hacks or gameplay-altering modifications. StartPos runs are accepted as world-record submissions on the ILL.
+                        </p>
+                        <p>
+                            The new submission must reach at least {{ minimumRecordPercent }}%, matching or beating the current highest recorded progress on this level. When the first record is added, any legitimate progress above 0% is accepted.
+                        </p>
+                        <p>
+                            Records that were accepted before the current highest percentage was reached remain visible, even if their percentages are lower. They are not removed retroactively.
                         </p>
                         <p>
                             Make sure the recording shows the correct level and clearly demonstrates the submitted progress. Include the level ID when submitting.
@@ -171,6 +177,13 @@ export default {
         },
         level() {
             return this.list?.[this.selected]?.[0] || null;
+        },
+        minimumRecordPercent() {
+            if (!this.isImpossible || !this.level?.records?.length) {
+                return 0;
+            }
+
+            return Math.max(...this.level.records.map((record) => Number(record.percent) || 0));
         },
         video() {
             if (!this.level) {
