@@ -16,6 +16,8 @@ const app = Vue.createApp({
             demon: 'Demon List',
             challenge: 'Challenge List',
             impossible: 'Impossible Levels List',
+            platformer: 'Platformer List',
+            nondemon: 'Non-Demon Levels List',
         },
     }),
     methods: {
