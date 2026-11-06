@@ -7,5 +7,13 @@
     "verification": "https://youtu.be/N5lvFoQA3DY?si=2QvvLwShOfm4j0sh",
     "percentToQualify": 70,
     "password": "Free to copy",
-    "records": []
+    "records": [
+        {
+            "user": "Vetiwi",
+            "link": "https://medal.tv/games/requested/clips/nS1HtlxzO8l7zxEMh",
+            "percent": 100,
+            "fps": 120,
+            "mobile": false
+        }
+    ]
 }
