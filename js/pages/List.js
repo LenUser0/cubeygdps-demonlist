@@ -49,8 +49,12 @@ export default {
                         <p class="type-body">{{ level.author }}</p>
                     </div>
                     <iframe v-if="video" class="video" id="videoframe" :src="video" loading="lazy" frameborder="0"></iframe>
-                    <p v-else-if="isImpossible">Unverified — no verification video required.</p>
-                    <p v-else>Placeholder level — awaiting entries.</p>
+                    <div v-if="level.showcase && level.verification" class="video-switch">
+                        <button type="button" @click="toggledShowcase = !toggledShowcase">
+                            {{ toggledShowcase ? 'Show verification video' : 'Showcase video' }}
+                        </button>
+                    </div>
+                    <p v-else-if="!video && !isImpossible">Placeholder level — awaiting entries.</p>
                     <ul class="stats">
                         <li>
                             <div class="type-title-sm">Points when completed</div>
@@ -154,6 +158,7 @@ export default {
         list: [],
         editors: [],
         recordLoadId: 0,
+        toggledShowcase: false,
         loading: true,
         selected: 0,
         errors: [],
@@ -172,19 +177,11 @@ export default {
                 return "";
             }
 
-            if (!this.level.verification) {
-                return "";
-            }
+            const videoUrl = this.toggledShowcase && this.level.showcase
+                ? this.level.showcase
+                : (this.level.verification || this.level.showcase);
 
-            if (!this.level.showcase) {
-                return embed(this.level.verification);
-            }
-
-            return embed(
-                this.toggledShowcase
-                    ? this.level.showcase
-                    : this.level.verification
-            );
+            return videoUrl ? embed(videoUrl) : "";
         },
     },
     async mounted() {
@@ -235,6 +232,7 @@ export default {
             }
 
             this.selected = index;
+            this.toggledShowcase = false;
             await this.loadLevelRecords(index);
         },
         async loadLevelRecords(index) {
