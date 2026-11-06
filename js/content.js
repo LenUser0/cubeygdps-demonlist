@@ -8,6 +8,8 @@ const listSources = {
     demon: { directory: '../data/', listFile: '_list.json' },
     challenge: { directory: '../data/challenge/', listFile: '_list.json' },
     impossible: { directory: '../data/impossible/', listFile: '_list.json' },
+    platformer: { directory: '../data/platformer/', listFile: '_list.json' },
+    nondemon: { directory: '../data/non-demon/', listFile: '_list.json' },
 };
 
 const getListSource = (listId = 'demon') =>
