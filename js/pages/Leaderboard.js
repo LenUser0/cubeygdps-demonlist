@@ -45,6 +45,10 @@ export default {
                     <div class="player">
                         <h1>#{{ selected + 1 }} {{ entry.user }}</h1>
                         <h3>{{ entry.total }}</h3>
+                        <section v-if="hardestCompletion" class="hardest-completion">
+                            <h2>Hardest Completion</h2>
+                            <p>#{{ hardestCompletion.rank }} · <a :href="hardestCompletion.link" target="_blank" rel="noopener noreferrer">{{ hardestCompletion.level }}</a></p>
+                        </section>
                         <h2 v-if="entry.verified.length > 0">Verified ({{ entry.verified.length}})</h2>
                         <table class="table">
                             <tr v-for="(score, i) in entry.verified" :key="i">
@@ -93,6 +97,12 @@ export default {
         </main>
     `,
     computed: {
+        hardestCompletion() {
+            return this.entry?.completed?.reduce(
+                (hardest, completion) => !hardest || completion.rank < hardest.rank ? completion : hardest,
+                null,
+            ) ?? null;
+        },
         entry() {
             return this.leaderboard[this.selected];
         },
