@@ -1,0 +1,16 @@
+
+.page-generator { padding: 2rem; }
+.page-generator .generator-card { max-width: 54rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+.page-generator form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.page-generator form label { display: flex; flex-direction: column; gap: 0.4rem; }
+.page-generator input:not([type="checkbox"]) { width: 100%; min-width: 0; padding: 0.7rem; border: 1px solid #888; border-radius: 0.4rem; background: var(--color-background); color: var(--color-on-background); }
+.page-generator .generator-check { flex-direction: row; align-items: center; }
+.page-generator .generator-tabs, .page-generator .generator-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.page-generator button { padding: 0.7rem 1rem; border: 0; border-radius: 0.4rem; background: var(--color-primary); color: var(--color-on-primary); cursor: pointer; }
+.page-generator button:disabled { opacity: 0.45; cursor: not-allowed; }
+.page-generator .generator-tabs .active { outline: 2px solid var(--color-on-background); }
+.page-generator .generator-warning, .page-generator .generator-error { padding: 0.8rem; border-radius: 0.4rem; background: #8c2525; color: white; }
+.page-generator .generator-output { overflow: auto; padding: 1rem; border-radius: 0.5rem; background: var(--color-background-hover); white-space: pre-wrap; overflow-wrap: anywhere; }
+.page-generator .generator-preview { padding: 1rem; border-radius: 0.5rem; background: var(--color-background-hover); display: flex; flex-direction: column; gap: 0.5rem; }
+.page-generator .generator-muted { opacity: 0.7; }
+@media (max-width: 700px) { .page-generator form { grid-template-columns: 1fr; } }
