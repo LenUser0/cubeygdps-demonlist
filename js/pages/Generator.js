@@ -28,7 +28,6 @@ export default {
                         <label>Completion video URL <input type="url" v-model="form.link"></label>
                         <label>Progress (%) <input type="number" min="1" max="100" v-model="form.percent"></label>
                         <label>FPS <input type="number" min="1" step="1" v-model="form.fps"></label>
-                        <label>Record date <input type="date" v-model="form.date"></label>
                         <label class="generator-check"><input type="checkbox" v-model="form.mobile"> Mobile</label>
                         <label class="generator-check"><input type="checkbox" v-model="form.cbf"> CBF</label>
                     </template>
@@ -53,7 +52,7 @@ export default {
                 <div class="generator-preview" v-else-if="isValid">
                     <div class="record-preview-row">
                         <strong>{{ clean(form.percent) }}%</strong>
-                        <span class="record-preview-user">{{ clean(form.user) }}<span v-if="form.date && isFreshDate(form.date)" class="record-new">New!</span></span>
+                        <span class="record-preview-user">{{ clean(form.user) }}</span>
                         <img v-if="form.mobile" :src="store.dark ? './assets/phone-landscape-dark.svg' : './assets/phone-landscape.svg'" alt="Mobile" class="record-preview-phone">
                         <span>{{ form.fps }} FPS<span v-if="form.cbf"> + CBF</span></span>
                     </div>
@@ -70,7 +69,7 @@ export default {
         form: {
             id: '', name: '', author: '', creators: '', verifier: '',
             verification: '', showcase: '', percentToQualify: 100, password: '',
-            user: '', link: '', percent: 100, fps: 60, date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10),
+            user: '', link: '', percent: 100, fps: 60,
             mobile: false, cbf: false,
         },
     }),
@@ -80,7 +79,7 @@ export default {
             const f = this.form;
             const requiredText = this.kind === 'level'
                 ? [['Level name', f.name], ['Author', f.author], ['Creators', f.creators], ['Verifier', f.verifier]]
-                : [['Player name', f.user], ['Video URL', f.link], ['Date', f.date]];
+                : [['Player name', f.user], ['Video URL', f.link]];
             for (const [label, value] of requiredText) {
                 if (!String(value ?? '').trim()) e.push(label + ' is required.');
             }
@@ -115,10 +114,6 @@ export default {
                 return url.protocol === 'https:' || url.protocol === 'http:';
             } catch { return false; }
         },
-        isFreshDate(date) {
-            const age = Date.now() - new Date(date + 'T00:00:00').getTime();
-            return age >= 0 && age < 7 * 24 * 60 * 60 * 1000;
-        },
         generate() {
             if (!this.isValid) return;
             const f = this.form;
@@ -144,7 +139,6 @@ export default {
                     fps: Number(f.fps),
                     mobile: Boolean(f.mobile),
                     cbf: Boolean(f.cbf),
-                    date: f.date,
                 };
             }
             this.generatedJson = JSON.stringify(output, null, 4);
