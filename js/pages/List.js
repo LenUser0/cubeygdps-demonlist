@@ -81,6 +81,7 @@ export default {
                             </td>
                             <td class="user">
                                 <a :href="record.link" target="_blank" class="type-label-lg">{{ record.user }}</a>
+                                <span v-if="isNewRecord(record)" class="record-new">New!</span>
                             </td>
                             <td class="mobile">
                                 <img v-if="record.mobile" :src="\`./assets/phone-landscape\${store.dark ? '-dark' : ''}.svg\`" alt="Mobile">
@@ -238,6 +239,12 @@ export default {
     methods: {
         embed,
         score,
+        isNewRecord(record) {
+            if (!record.date) return false;
+            const recordedAt = new Date(record.date + 'T00:00:00');
+            const age = Date.now() - recordedAt.getTime();
+            return Number.isFinite(recordedAt.getTime()) && age >= 0 && age < 7 * 24 * 60 * 60 * 1000;
+        },
         async selectLevel(index) {
             const previousLevel = this.list?.[this.selected]?.[0];
             if (previousLevel) {
