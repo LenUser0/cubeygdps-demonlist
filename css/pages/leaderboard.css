@@ -71,3 +71,13 @@
 .page-leaderboard .player .table a:hover {
     text-decoration: underline;
 }
+
+.page-leaderboard .player .hardest-completion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.page-leaderboard .player .hardest-completion a:hover {
+    text-decoration: underline;
+}
