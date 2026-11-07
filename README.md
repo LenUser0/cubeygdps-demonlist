@@ -19,8 +19,6 @@ The unlisted generator page is available at `/#/moderator-tools`. It can generat
 
 **Security note:** This site is hosted on static GitHub Pages. An unlisted URL is not authentication or access control. Anyone who discovers the route can use the generator. Do not enter passwords, tokens, or other secrets there. Repository write permissions remain controlled by GitHub.
 
-New records may include a `date` field in `YYYY-MM-DD` format. Records dated within the last seven days display a **New!** label. Existing records without a date remain unchanged.
-
 ## Moderator Guide
 
 This section is intended for **list moderators and editors**. You do not need to understand the website's JavaScript to maintain the list. Most day-to-day changes only require editing JSON files in `data/`.
