@@ -1,3 +1,5 @@
+import { store } from '../main.js';
+
 export default {
     template: `
         <main class="page-generator">
@@ -49,8 +51,12 @@ export default {
                     <p>Qualify: {{ form.percentToQualify }}%</p>
                 </div>
                 <div class="generator-preview" v-else-if="isValid">
-                    <p><strong>{{ clean(form.percent) }}%</strong> · <strong>{{ clean(form.user) }}</strong><span v-if="form.date && isFreshDate(form.date)" class="record-new">New!</span></p>
-                    <p>{{ form.fps }} FPS<span v-if="form.cbf"> + CBF</span><span v-if="form.mobile"> · Mobile</span></p>
+                    <div class="record-preview-row">
+                        <strong>{{ clean(form.percent) }}%</strong>
+                        <span class="record-preview-user">{{ clean(form.user) }}<span v-if="form.date && isFreshDate(form.date)" class="record-new">New!</span></span>
+                        <img v-if="form.mobile" :src="store.dark ? './assets/phone-landscape-dark.svg' : './assets/phone-landscape.svg'" alt="Mobile" class="record-preview-phone">
+                        <span>{{ form.fps }} FPS<span v-if="form.cbf"> + CBF</span></span>
+                    </div>
                 </div>
                 <p v-else class="generator-muted">A preview appears when all required fields are valid.</p>
             </section>
@@ -58,6 +64,7 @@ export default {
     `,
     data: () => ({
         kind: 'level',
+        store,
         generatedJson: '',
         copyMessage: '',
         form: {
