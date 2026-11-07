@@ -1,5 +1,3 @@
-import Spinner from '../components/Spinner.js';
-
 export default {
     components: { Spinner },
     template: `
@@ -66,7 +64,7 @@ export default {
         form: {
             id: '', name: '', author: '', creators: '', verifier: '',
             verification: '', showcase: '', percentToQualify: 100, password: '',
-            user: '', link: '', percent: 100, fps: 60, date: new Date().toISOString().slice(0, 10),
+            user: '', link: '', percent: 100, fps: 60, date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10),
             mobile: false, cbf: false,
         },
     }),
