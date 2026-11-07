@@ -125,14 +125,24 @@ export default {
         this.storageKey = `roulette:${listId}`;
         const saved = localStorage.getItem(this.storageKey) ??
             (listId === 'demon' ? localStorage.getItem('roulette') : null);
-        const roulette = saved ? JSON.parse(saved) : null;
+        let roulette = null;
+        try {
+            roulette = saved ? JSON.parse(saved) : null;
+        } catch (error) {
+            console.warn('Could not restore saved roulette.', error);
+            localStorage.removeItem(this.storageKey);
+        }
 
-        if (!roulette) {
+        if (!roulette || !Array.isArray(roulette.levels) || !Array.isArray(roulette.progression)) {
             return;
         }
 
         this.levels = roulette.levels;
         this.progression = roulette.progression;
+        this.givenUp = Boolean(roulette.givenUp);
+        this.showRemaining = Boolean(roulette.showRemaining);
+        this.useMainList = roulette.useMainList ?? true;
+        this.useExtendedList = roulette.useExtendedList ?? true;
     },
     computed: {
         currentLevel() {
@@ -217,6 +227,7 @@ export default {
             this.percentage = undefined;
 
             this.loading = false;
+            this.save();
         },
         save() {
             localStorage.setItem(
@@ -224,6 +235,10 @@ export default {
                 JSON.stringify({
                     levels: this.levels,
                     progression: this.progression,
+                    givenUp: this.givenUp,
+                    showRemaining: this.showRemaining,
+                    useMainList: this.useMainList,
+                    useExtendedList: this.useExtendedList,
                 }),
             );
         },
@@ -248,8 +263,8 @@ export default {
         onGiveUp() {
             this.givenUp = true;
 
-            // Save progress
-            localStorage.removeItem(this.storageKey);
+            // Keep the completed/given-up state so it can be restored after closing the browser.
+            this.save();
         },
         onImport() {
             if (
@@ -281,6 +296,8 @@ export default {
 
                 this.levels = roulette.levels;
                 this.progression = roulette.progression;
+                this.givenUp = false;
+                this.showRemaining = false;
                 this.save();
                 this.givenUp = false;
                 this.showRemaining = false;
@@ -295,6 +312,10 @@ export default {
                 [JSON.stringify({
                     levels: this.levels,
                     progression: this.progression,
+                    givenUp: this.givenUp,
+                    showRemaining: this.showRemaining,
+                    useMainList: this.useMainList,
+                    useExtendedList: this.useExtendedList,
                 })],
                 { type: 'application/json' },
             );
