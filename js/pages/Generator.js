@@ -1,5 +1,4 @@
 export default {
-    components: { Spinner },
     template: `
         <main class="page-generator">
             <section class="generator-card">
@@ -73,7 +72,7 @@ export default {
             const e = [];
             const f = this.form;
             const requiredText = this.kind === 'level'
-                ? [['Level name', f.name], ['Author', f.author], ['Creators', f.creators]]
+                ? [['Level name', f.name], ['Author', f.author], ['Creators', f.creators], ['Verifier', f.verifier]]
                 : [['Player name', f.user], ['Video URL', f.link], ['Date', f.date]];
             for (const [label, value] of requiredText) {
                 if (!String(value ?? '').trim()) e.push(label + ' is required.');
