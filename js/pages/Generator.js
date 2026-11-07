@@ -92,9 +92,6 @@ export default {
                 if (!this.validUrl(f.link)) e.push('Video URL must be a valid HTTP(S) URL.');
                 if (!Number.isFinite(Number(f.percent)) || Number(f.percent) < 1 || Number(f.percent) > 100) e.push('Progress must be between 1 and 100.');
                 if (!Number.isInteger(Number(f.fps)) || Number(f.fps) < 1) e.push('FPS must be a positive whole number.');
-                const parsedDate = new Date(f.date + 'T00:00:00');
-                const validCalendarDate = !Number.isNaN(parsedDate.getTime()) && parsedDate.getFullYear() === Number(f.date.slice(0, 4)) && parsedDate.getMonth() + 1 === Number(f.date.slice(5, 7)) && parsedDate.getDate() === Number(f.date.slice(8, 10));
-                if (!/^\d{4}-\d{2}-\d{2}$/.test(f.date) || !validCalendarDate) e.push('A valid date is required.');
             }
             return e;
         },
