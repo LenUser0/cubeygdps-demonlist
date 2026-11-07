@@ -45,10 +45,20 @@ export default {
                     <div class="player">
                         <h1>#{{ selected + 1 }} {{ entry.user }}</h1>
                         <h3>{{ entry.total }}</h3>
-                        <section v-if="hardestCompletion" class="hardest-completion">
-                            <h2>Hardest Completion</h2>
-                            <p>#{{ hardestCompletion.rank }} · <a :href="hardestCompletion.link" target="_blank" rel="noopener noreferrer">{{ hardestCompletion.level }}</a></p>
-                        </section>
+                        <h2 v-if="hardestCompletion">Hardest Completion</h2>
+                        <table v-if="hardestCompletion" class="table">
+                            <tr>
+                                <td class="rank">
+                                    <p>#{{ hardestCompletion.rank }}</p>
+                                </td>
+                                <td class="level">
+                                    <a class="type-label-lg" target="_blank" :href="hardestCompletion.link">{{ hardestCompletion.level }}</a>
+                                </td>
+                                <td class="score">
+                                    <p>+{{ localize(hardestCompletion.score) }}</p>
+                                </td>
+                            </tr>
+                        </table>
                         <h2 v-if="entry.verified.length > 0">Verified ({{ entry.verified.length}})</h2>
                         <table class="table">
                             <tr v-for="(score, i) in entry.verified" :key="i">
