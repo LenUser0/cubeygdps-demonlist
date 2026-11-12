@@ -133,11 +133,25 @@ export async function fetchEditors() {
 }
 
 export async function fetchLeaderboard(listId = 'demon') {
-    // Load level metadata without retaining every level's records at once.
-    const list = await fetchList(listId, { includeRecords: false });
+    const source = getListSource(listId);
+    const errs = [];
+    let paths;
 
-    if (!list) {
-        return [[], [getListSource(listId).listFile]];
+    try {
+        const listResult = await fetch(dataUrl(source.directory, source.listFile));
+
+        if (!listResult.ok) {
+            throw new Error(`HTTP ${listResult.status} while loading ${source.listFile}`);
+        }
+
+        paths = await listResult.json();
+
+        if (!Array.isArray(paths)) {
+            throw new Error('_list.json does not contain an array');
+        }
+    } catch (error) {
+        console.error('Failed to load leaderboard list.', error);
+        return [[], [source.listFile]];
     }
 
     const isImpossible = listId === "impossible";
@@ -150,36 +164,43 @@ export async function fetchLeaderboard(listId = 'demon') {
         }
         return userNames.get(normalized);
     };
-    const errs = [];
 
-    for (let index = 0; index < list.length; index++) {
-        const [level, err] = list[index];
+    // Load, process, and release each level JSON before moving to the next one.
+    for (let index = 0; index < paths.length; index++) {
+        const path = paths[index];
         const rank = index + 1;
 
-        if (err) {
-            errs.push(err);
-            continue;
-        }
-
-        // ILL levels are intentionally unverified; do not award verifier points.
-        if (!isImpossible && level.verifier) {
-            const verifier = getUserKey(level.verifier);
-            scoreMap[verifier] ??= {
-                verified: [],
-                completed: [],
-                progressed: [],
-            };
-            scoreMap[verifier].verified.push({
-                rank,
-                level: level.name,
-                score: score(rank, 100, level.percentToQualify),
-                link: level.verification,
-            });
-        }
-
-        // Fetch and process one level's records at a time to reduce peak memory.
         try {
-            const records = await fetchLevelRecords(level.path, listId);
+            const result = await fetch(dataUrl(source.directory, path + '.json'));
+
+            if (!result.ok) {
+                throw new Error('HTTP ' + result.status + ' while loading ' + path + '.json');
+            }
+
+            const level = await result.json();
+
+            if (!level || typeof level !== 'object') {
+                throw new Error('level JSON is not an object');
+            }
+
+            if (!isImpossible && level.verifier) {
+                const verifier = getUserKey(level.verifier);
+                scoreMap[verifier] ??= {
+                    verified: [],
+                    completed: [],
+                    progressed: [],
+                };
+                scoreMap[verifier].verified.push({
+                    rank,
+                    level: level.name,
+                    score: score(rank, 100, level.percentToQualify),
+                    link: level.verification,
+                });
+            }
+
+            const records = Array.isArray(level.records) ? level.records : [];
+            records.sort((a, b) => (b.percent ?? 0) - (a.percent ?? 0));
+
             for (const record of records) {
                 const user = getUserKey(record.user);
                 scoreMap[user] ??= {
@@ -208,12 +229,11 @@ export async function fetchLeaderboard(listId = 'demon') {
                 });
             }
         } catch (error) {
-            console.error('Failed to load leaderboard records for ' + level.path + '.', error);
-            errs.push(level.path);
+            console.error('Failed to load leaderboard level ' + path + '.', error);
+            errs.push(path);
         }
     }
 
-    // Wrap in extra Object containing the user and total score.
     const res = Object.entries(scoreMap).map(([user, scores]) => {
         const { verified, completed, progressed } = scores;
         let total = 0;
@@ -228,6 +248,5 @@ export async function fetchLeaderboard(listId = 'demon') {
         };
     });
 
-    // Sort by total score.
     return [res.sort((a, b) => b.total - a.total), errs];
 }
