@@ -152,7 +152,10 @@ export async function fetchLeaderboard(listId = 'demon') {
     };
     const errs = [];
 
-    for (const [level, err] of list) {
+    for (let index = 0; index < list.length; index++) {
+        const [level, err] = list[index];
+        const rank = index + 1;
+
         if (err) {
             errs.push(err);
             continue;
@@ -167,9 +170,9 @@ export async function fetchLeaderboard(listId = 'demon') {
                 progressed: [],
             };
             scoreMap[verifier].verified.push({
-                rank: list.indexOf(list.find((entry) => entry[0] === level)) + 1,
+                rank,
                 level: level.name,
-                score: score(list.indexOf(list.find((entry) => entry[0] === level)) + 1, 100, level.percentToQualify),
+                score: score(rank, 100, level.percentToQualify),
                 link: level.verification,
             });
         }
@@ -177,8 +180,6 @@ export async function fetchLeaderboard(listId = 'demon') {
         // Fetch and process one level's records at a time to reduce peak memory.
         try {
             const records = await fetchLevelRecords(level.path, listId);
-            const rank = list.findIndex((entry) => entry[0] === level) + 1;
-
             for (const record of records) {
                 const user = getUserKey(record.user);
                 scoreMap[user] ??= {
