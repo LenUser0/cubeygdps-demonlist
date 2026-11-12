@@ -133,7 +133,8 @@ export async function fetchEditors() {
 }
 
 export async function fetchLeaderboard(listId = 'demon') {
-    const list = await fetchList(listId);
+    // Load level metadata without retaining every level's records at once.
+    const list = await fetchList(listId, { includeRecords: false });
 
     if (!list) {
         return [[], [getListSource(listId).listFile]];
@@ -150,10 +151,11 @@ export async function fetchLeaderboard(listId = 'demon') {
         return userNames.get(normalized);
     };
     const errs = [];
-    list.forEach(([level, err], rank) => {
+
+    for (const [level, err] of list) {
         if (err) {
             errs.push(err);
-            return;
+            continue;
         }
 
         // ILL levels are intentionally unverified; do not award verifier points.
@@ -164,45 +166,53 @@ export async function fetchLeaderboard(listId = 'demon') {
                 completed: [],
                 progressed: [],
             };
-            const { verified } = scoreMap[verifier];
-            verified.push({
-                rank: rank + 1,
+            scoreMap[verifier].verified.push({
+                rank: list.indexOf(list.find((entry) => entry[0] === level)) + 1,
                 level: level.name,
-                score: score(rank + 1, 100, level.percentToQualify),
+                score: score(list.indexOf(list.find((entry) => entry[0] === level)) + 1, 100, level.percentToQualify),
                 link: level.verification,
             });
         }
 
-        // Records
-        level.records.forEach((record) => {
-            const user = getUserKey(record.user);
-            scoreMap[user] ??= {
-                verified: [],
-                completed: [],
-                progressed: [],
-            };
-            const { completed, progressed } = scoreMap[user];
-            if (record.percent === 100) {
-                completed.push({
-                    rank: rank + 1,
+        // Fetch and process one level's records at a time to reduce peak memory.
+        try {
+            const records = await fetchLevelRecords(level.path, listId);
+            const rank = list.findIndex((entry) => entry[0] === level) + 1;
+
+            for (const record of records) {
+                const user = getUserKey(record.user);
+                scoreMap[user] ??= {
+                    verified: [],
+                    completed: [],
+                    progressed: [],
+                };
+                const { completed, progressed } = scoreMap[user];
+
+                if (record.percent === 100) {
+                    completed.push({
+                        rank,
+                        level: level.name,
+                        score: score(rank, 100, level.percentToQualify),
+                        link: record.link,
+                    });
+                    continue;
+                }
+
+                progressed.push({
+                    rank,
                     level: level.name,
-                    score: score(rank + 1, 100, level.percentToQualify),
+                    percent: record.percent,
+                    score: score(rank, record.percent, level.percentToQualify),
                     link: record.link,
                 });
-                return;
             }
+        } catch (error) {
+            console.error('Failed to load leaderboard records for ' + level.path + '.', error);
+            errs.push(level.path);
+        }
+    }
 
-            progressed.push({
-                rank: rank + 1,
-                level: level.name,
-                percent: record.percent,
-                score: score(rank + 1, record.percent, level.percentToQualify),
-                link: record.link,
-            });
-        });
-    });
-
-    // Wrap in extra Object containing the user and total score
+    // Wrap in extra Object containing the user and total score.
     const res = Object.entries(scoreMap).map(([user, scores]) => {
         const { verified, completed, progressed } = scores;
         let total = 0;
@@ -217,6 +227,6 @@ export async function fetchLeaderboard(listId = 'demon') {
         };
     });
 
-    // Sort by total score
+    // Sort by total score.
     return [res.sort((a, b) => b.total - a.total), errs];
 }
