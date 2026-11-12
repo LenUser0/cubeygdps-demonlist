@@ -128,3 +128,20 @@
         align-self: stretch;
     }
 }
+
+
+@media screen and (max-width: 700px) {
+    .page-roulette { display: flex; flex-direction: column; gap: 0; }
+    .page-roulette .sidebar { padding: 1rem; gap: 1rem; }
+    .page-roulette .sidebar .save .btns { flex-wrap: wrap; }
+    .page-roulette .levels-container { overflow: visible; padding: 0 1rem 1rem; }
+    .page-roulette .levels { padding-block: 0.5rem; gap: 1rem; }
+    .page-roulette .levels .level { grid-template-columns: minmax(0, 1fr); }
+    .page-roulette .levels .level .video { max-height: 13rem; overflow: hidden; }
+    .page-roulette .levels .level .meta { gap: 0.6rem; padding: 0.85rem; }
+    .page-roulette .levels .level .actions {
+        grid-column: 1; flex-wrap: wrap; gap: 0.6rem; padding: 0.85rem;
+    }
+    .page-roulette .levels .level .actions input[type="number"] { flex: 1 1 100%; min-width: 0; }
+    .page-roulette .toasts-container { grid-column: 1; grid-row: auto; overflow: visible; margin: 0 1rem 1rem; }
+}
