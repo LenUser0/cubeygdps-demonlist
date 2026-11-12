@@ -18,7 +18,7 @@ const getListSource = (listId = 'demon') =>
 const dataUrl = (directory, file) =>
     new URL(`${directory}${file}`, import.meta.url).href;
 
-export async function fetchList(listId = 'demon', { includeRecords = true } = {}) {
+export async function fetchList(listId = 'demon', { includeRecords = true, onBatch } = {}) {
     const source = getListSource(listId);
 
     try {
@@ -86,6 +86,11 @@ export async function fetchList(listId = 'demon', { includeRecords = true } = {}
             );
 
             results.push(...batch);
+
+            // Let the page render completed batches instead of waiting for the whole list.
+            if (typeof onBatch === 'function') {
+                onBatch(batch, start);
+            }
         }
 
         return results;
