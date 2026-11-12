@@ -199,10 +199,21 @@ export default {
     },
     async mounted() {
         try {
-            [this.list, this.editors] = await Promise.all([
-                fetchList(this.$route.query.list, { includeRecords: false }),
+            this.list = [];
+
+            const [loadedList, editors] = await Promise.all([
+                fetchList(this.$route.query.list, {
+                    includeRecords: false,
+                    onBatch: (batch) => {
+                        this.list.push(...batch);
+                        this.loading = false;
+                    },
+                }),
                 fetchEditors(),
             ]);
+
+            this.list = loadedList;
+            this.editors = editors;
 
             // Load records only for the initially selected level.
             if (this.list?.[this.selected]?.[0]) {
