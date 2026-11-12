@@ -74,21 +74,21 @@
     justify-content: space-between;
     gap: 0.8rem;
     width: 12rem;
-    padding: 0.7rem 0.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    border-radius: 0.65rem;
-    background: linear-gradient(135deg, rgba(255, 153, 51, 0.3), rgba(120, 55, 0, 0.2));
+    padding: 0.8rem 0.9rem;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 0.7rem;
+    background: rgba(105, 43, 0, 0.38);
     color: var(--color-on-primary);
-    font: 700 0.9rem "Lexend Deca", sans-serif;
+    font: 700 0.95rem "Lexend Deca", sans-serif;
     text-align: left;
     cursor: pointer;
-    box-shadow: 0 3px 10px rgba(45, 20, 0, 0.18);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14), 0 4px 12px rgba(45, 20, 0, 0.28);
     transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
 }
 
 .nav .list-menu .list-switcher:hover {
     border-color: white;
-    background-color: rgba(255, 153, 51, 0.35);
+    background: rgba(80, 30, 0, 0.55);
     transform: translateY(-1px);
 }
 
