@@ -109,3 +109,29 @@ input[type="checkbox"] {
         white-space: nowrap;
     }
 }
+
+
+/* Mobile layout */
+@media screen and (max-width: 700px) {
+    html, body { min-height: 100%; height: auto; }
+    header {
+        height: auto; min-height: 4rem; flex-direction: column; align-items: stretch;
+        gap: 0.85rem; padding: 0.85rem 1rem;
+    }
+    header .logo { justify-content: space-between; align-items: center; gap: 0.5rem; }
+    header .logo h2 { font-size: 1.25rem; line-height: 1.5rem; white-space: normal; }
+    header .logo p { font-size: 0.75rem; line-height: 1rem; white-space: nowrap; }
+    header .nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; width: 100%; }
+    .nav .list-switcher-label { display: none; }
+    .nav .list-menu { flex: 1 1 100%; order: -1; }
+    .nav .list-menu .list-switcher { width: 100%; max-width: none; min-height: 2.75rem; }
+    .nav .nav__tab { min-height: 2.5rem; padding-inline: 0.35rem; font-size: 0.85rem; }
+    .nav .nav__actions { flex: 1 1 100%; justify-content: flex-start; gap: 0.35rem; margin-top: 0.15rem; }
+    .nav .nav__actions .nav__icon { width: 2.5rem; height: 2.5rem; }
+    .nav .nav__actions .nav__cta { margin-left: auto; padding: 0.7rem 0.85rem; font-size: 0.85rem; }
+    main {
+        height: auto; min-height: 0; flex: 1 0 auto;
+        grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; overflow: visible;
+    }
+    main > div { min-width: 0; overflow: visible; }
+}
